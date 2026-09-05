@@ -6,6 +6,20 @@
 <title>The Postpartum Suite — Live-in postpartum care</title>
 <meta name="description" content="Live-in postpartum care for you and your baby. A trained specialist stays with you, from five days to thirty, so your own recovery is the thing being looked after." />
 <link rel="icon" href="assets/img/the-postpartum-suite-logo-mark.webp" />
+
+<!-- A page whose whole argument is made in photographs was unfurling in
+     messages and DMs as a bare grey link. The handover frame is the one
+     image that carries the proposition on its own. Relative paths resolve
+     against the document, which is enough for the crawlers that matter;
+     they become absolute when this gets a domain. -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="The Postpartum Suite — Live-in postpartum care" />
+<meta property="og:description" content="A trained specialist stays with you, from five days to thirty, so your own recovery is the thing being looked after." />
+<meta property="og:image" content="assets/img/s2-handoff.webp" />
+<meta property="og:image:alt" content="A specialist passing the swaddled baby to the mother resting in bed" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#F3EFEC" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Karla:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
@@ -46,6 +60,11 @@
      their own contrast instead, and the whole set flips to a light
      treatment over the one dark frame on the page.
      ============================================================ -->
+<!-- Fourteen viewport-heights of scroll story sit between the nav and the
+     programmes. A keyboard user should not have to travel it to reach the
+     content, and this page has no other way past the bar. -->
+<a class="skip" href="#content">Skip to content</a>
+
 <header class="nav" data-nav>
   <div class="nav__inner">
 
@@ -143,7 +162,7 @@
 
 <div class="veil" data-veil hidden></div>
 
-<main>
+<main id="content" tabindex="-1">
 
 <!-- ============ ACT 1 · 07:00 · ARRIVAL ============
      pin + focus pull + kinetic lines. The room resolves out of blur. -->
@@ -348,7 +367,11 @@
      Carries no data-time. It was written to avoid running the day clock's
      readout backwards from 22:00, and that rail has since been removed, so
      nothing reads the attribute now either way.
-     NOTE: images are placeholders from the starter pack, to be swapped. -->
+
+     Each treatment carries its own focal point in data-pos. The frames
+     crop to 4:5 here and 4:3 on a phone, from sources running 4:5 to 16:9,
+     and centring the wide ones cuts the mother out of her own photograph.
+     Open: item 06 has no photograph of its own in the set. -->
 <section class="act act--gallery" data-act>
   <div class="wrap">
     <div class="gal" data-gallery>

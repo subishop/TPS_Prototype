@@ -106,6 +106,31 @@ img { display: block; max-width: 100%; }
   outline-offset: 3px;
   border-radius: 2px;
 }
+/* The landing target itself is focusable so the skip actually moves the
+   caret, but it is not a control and should never draw a ring of its own. */
+main:focus { outline: none; }
+
+/* Off screen until it is tabbed to, then a paper chip in the corner the eye
+   already goes to. It sits above the nav because it has to be reachable
+   before the nav is. */
+.skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 80;
+  padding: 12px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: .82rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--hairline-firm);
+  border-radius: var(--r-badge);
+  transform: translateY(calc(-100% - 20px));
+  transition: transform 200ms var(--ease-out);
+}
+.skip:focus-visible { transform: translateY(0); }
 
 /* ---------- Type ---------- */
 
@@ -461,9 +486,19 @@ img { display: block; max-width: 100%; }
   width: var(--tab-w);
   height: var(--tab-h);
   padding: 0 10px;
-  border: 0;
+  /* Depth is hairlines, edges and overlap, never a shadow. The edge is
+     what makes the chip read as a control rather than as text lying on a
+     photograph, which is what it looked like anywhere the frame behind it
+     was busy. */
+  border: 1px solid rgba(10, 10, 10, .10);
   border-radius: var(--r-badge);
-  background: rgba(140, 127, 121, .04);
+  /* The page's own canvas, held at 62% over whatever frame is behind. A
+     0.04 tint was a breath: beautiful over the pale bedroom, invisible
+     over the rail cards and the treatment frames, where ink then sat
+     directly on the picture. At 62% the blend can never fall below AA
+     against ink, whatever the photograph underneath is doing, and it
+     still reads as glass rather than as a filled button. */
+  background: rgba(243, 239, 236, .62);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   color: var(--ink);
@@ -490,12 +525,24 @@ img { display: block; max-width: 100%; }
    dissolve, so the two happen as one moment rather than two. */
 .nav.is-dark .tab {
   background: rgba(140, 127, 121, .46);
+  /* The ink hairline that seats the chip on the light grounds would be
+     invisible here, so the edge changes sides with the theme. */
+  border-color: rgba(255, 255, 255, .22);
   color: var(--paper);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tab:hover { background: rgba(140, 127, 121, .14); }
+  .tab:hover { background: rgba(243, 239, 236, .86); border-color: rgba(10, 10, 10, .18); }
   .nav.is-dark .tab:hover { background: rgba(140, 127, 121, .62); }
+}
+
+/* A finger is not a cursor. The row sizes itself against the window, which
+   on a phone lands at 34px, and Menu and Enquire are the only two controls
+   on the whole screen there. Coarse pointers get the 44px that every touch
+   guideline asks for; the mouse keeps the proportions the row was drawn
+   with. */
+@media (pointer: coarse) {
+  .tab { --tab-h: 44px; }
 }
 
 /* The open panel's tab still takes the accent. That is a state, not a
@@ -841,7 +888,30 @@ html.drift-on .act--treatment { background: transparent; }
 
 /* ---------- Act 4: the rail ---------- */
 
-.act--pan .stage { align-items: center; }
+/* The rail travels sideways under a fixed frame, so both ends of it are cut
+   by the window. A hard cut through a word is what made the opening heading
+   read as a bug: for most of the act the screen said "ds of care, gle day."
+   The frame softens instead, so the intro dissolves as it leaves and the
+   next card dissolves in, and the right edge doubles as the affordance that
+   says the rail continues. Cheaper and steadier than measuring the intro's
+   position every frame, and it fixes both edges at once. */
+/* The fade is exactly the gutter wide, which is what lets it cost nothing.
+   The rail already starts and ends its content one gutter in, so the ramp
+   finishes precisely where the heading begins and begins precisely where
+   the closing note ends: both open and land crisp with no padding added.
+   Padding here would have been paid for in scroll length, and the rail is
+   already long enough that it was crowding the peak's span. */
+.act--pan { --edge: var(--gutter); }
+.act--pan .stage {
+  align-items: center;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--edge), #000 calc(100% - var(--edge)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--edge), #000 calc(100% - var(--edge)), transparent 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The rail becomes a plain horizontal scroller here, which the reader
+     drives themselves, so nothing should be faded out at its ends. */
+  .act--pan .stage { -webkit-mask-image: none; mask-image: none; }
+}
 
 .rail {
   display: flex;
@@ -948,8 +1018,15 @@ html.drift-on .act--treatment { background: transparent; }
 
 /* ---------- Act 6: night ---------- */
 
+/* The brief calls the ending "authored silence": the act holds still on
+   purpose once the dissolve resolves, and that is the landing, not dead
+   scroll. At 0.62 of a viewport it never got a screen to itself, so the
+   silence was over before it registered and the treatments gallery was
+   already filling the frame while the day clock in the margin still read
+   22:00, the night. Given a full screen the act lands, and the clock's own
+   trigger ends on it before anything else is up. */
 .act--night {
-  padding-block: clamp(96px, 18vh, 200px);
+  padding-block: clamp(140px, 42vh, 420px);
   background: var(--rose-mist);
   text-align: left;
 }
