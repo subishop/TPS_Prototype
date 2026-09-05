@@ -62,7 +62,7 @@
   --measure: 62ch;
   --gutter:  24px;
   --section: 96px;
-  --nav-h:   72px;
+  --nav-h:   80px;
 
   /* The nav is the one row that belongs to the window rather than to the
      article column, so it carries its own two numbers. The inset is how
@@ -337,8 +337,13 @@ img { display: block; max-width: 100%; }
   transition-delay: 0ms;
 }
 .nav.is-scrolled .nav__mark {
-  height: 34px;
-  top: 21px;
+  /* About a third taller than the tabs, which is the relationship the
+     reference holds, where this used to be 0.89 of them. Fluid so it keeps
+     that relationship as they scale, and the offset is derived rather than
+     typed so it stays centred in the bar at every size. */
+  --mark-h: clamp(46px, 3.2vw, 56px);
+  height: var(--mark-h);
+  top: calc((var(--nav-h) - var(--mark-h)) / 2);
   /* Hangs back until the wordmark has cleared out from under it. */
   transition-delay: 240ms;
 }
@@ -413,43 +418,70 @@ img { display: block; max-width: 100%; }
    canvas ground, which is a panel, not glass. So the light grounds get
    a faint dark frost carrying ink, and the one dark ground gets the
    reference's own dark glass carrying white. */
+/* The chip.
+
+   No border, and on the light grounds barely any fill either. 0.04 is a
+   deliberate choice made off a rendered ladder from 0.46 down to zero: the
+   chip is meant to be a breath on the glass rather than a panel. What holds
+   it together on a photograph is the backdrop blur, soft inside against
+   sharp outside, not the tint. On the flat pale grounds, the fog whiteout
+   in the handoff and the programmes section, it is very close to invisible.
+   That is the intended reading, not a bug to be fixed by raising this
+   number, so do not raise it without asking.
+
+   The dark frame is the exception and keeps a real fill, below. A tint this
+   light has nothing to work with over a dark photograph, and that section
+   was the one everyone was happy with.
+
+   Warm rather than neutral grey, which measures about the same but reads
+   cold on a blush brand.
+
+   Sizes are clamps rather than fixed, so the row scales with the window the
+   way the reference does instead of holding one size from 861px to 2100px.
+   Flex centring rather than a line-height, so nothing has to be recomputed
+   if the height or the border ever change. */
 .tab {
+  --tab-h: clamp(34px, 2.4vw, 42px);
+  --tab-w: clamp(112px, 8.2vw, 152px);
   flex: none;
-  /* One width, not a minimum. Under min-width the labels set their own
-     size, so Programmes came out two pixels wider than the rest and the
-     row read as four near misses rather than a set. */
-  width: 124px;
-  height: 38px;
-  padding: 0 12px;
-  /* One step firmer. At 10% black on white glass the chips had no edge
-     against a pale photograph and looked like they were dissolving into
-     it rather than sitting on it. */
-  border: 1px solid var(--hairline-firm);
+  width: var(--tab-w);
+  height: var(--tab-h);
+  padding: 0 10px;
+  border: 0;
   border-radius: var(--r-badge);
-  background: rgba(255, 255, 255, .55);
+  background: rgba(140, 127, 121, .04);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   color: var(--ink);
   font-family: var(--f-body);
-  font-size: .79rem;
+  font-size: clamp(.72rem, .6rem + .28vw, .86rem);
   font-weight: 500;
   letter-spacing: .02em;
-  line-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+  transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out);
 }
 
+
+/* The dark frame keeps a real fill. Everywhere else the chip is a breath at
+   0.04, which is the look that was chosen on the light grounds, but a tint
+   that faint over a dark photograph reads as nothing at all. 0.46 here lifts
+   the chip clear of the night ground, which is the treatment that was
+   already working. It arrives on the same trigger as the ink, at 0.38 of the
+   dissolve, so the two happen as one moment rather than two. */
 .nav.is-dark .tab {
-  background: rgba(21, 15, 14, .30);
-  border-color: rgba(255, 255, 255, .26);
+  background: rgba(140, 127, 121, .46);
   color: var(--paper);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tab:hover { background: rgba(255, 255, 255, .72); }
-  .nav.is-dark .tab:hover { background: rgba(21, 15, 14, .46); }
+  .tab:hover { background: rgba(140, 127, 121, .14); }
+  .nav.is-dark .tab:hover { background: rgba(140, 127, 121, .62); }
 }
 
 /* The open panel's tab still takes the accent. That is a state, not a
@@ -457,7 +489,17 @@ img { display: block; max-width: 100%; }
 .tab[aria-expanded="true"],
 .nav.is-dark .tab[aria-expanded="true"] {
   background: var(--action);
-  border-color: transparent;
+  color: var(--paper);
+}
+
+/* Except the menu control. Its open state used to take the accent like any
+   other tab, which on a phone put two ember buttons side by side in the
+   same row and stopped Enquire being the only accented thing on screen.
+   It deepens its own tint instead, so ember stays the call to action's
+   alone, which is what the reference does. */
+.tab--menu[aria-expanded="true"],
+.nav.is-dark .tab--menu[aria-expanded="true"] {
+  background: rgba(140, 127, 121, .78);
   color: var(--paper);
 }
 
@@ -467,7 +509,6 @@ img { display: block; max-width: 100%; }
 .tab--cta,
 .nav.is-dark .tab--cta {
   background: var(--action);
-  border-color: transparent;
   color: var(--paper);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -478,29 +519,11 @@ img { display: block; max-width: 100%; }
 }
 .tab:active { transform: translateY(1px); }
 
-.burger {
-  display: none;
-  position: relative;
-  width: 42px; height: 38px;
-  border: 1px solid transparent;
-  background: rgba(227, 215, 211, .92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: var(--r-badge);
-  cursor: pointer;
-}
-.nav.is-dark .burger { background: rgba(21,15,14,.34); border-color: rgba(255,255,255,.28); }
-.burger span {
-  position: absolute; left: 13px;
-  width: 16px; height: 1.5px;
-  background: var(--ink);
-  transition: transform 180ms var(--ease-out), background-color 280ms var(--ease-out);
-}
-.nav.is-dark .burger span { background: var(--paper); }
-.burger span:first-child { top: 16px; }
-.burger span:last-child  { top: 21px; }
-.burger[aria-expanded="true"] span:first-child { transform: translateY(2.5px) rotate(45deg); }
-.burger[aria-expanded="true"] span:last-child  { transform: translateY(-2.5px) rotate(-45deg); }
+/* The menu control is a tab, not an icon. White Desert labels it in words
+   and it sits in the left group where the section tabs were, so on a phone
+   the row reads Menu, wordmark, Enquire rather than collapsing to a glyph
+   and dropping the call to action entirely, which is what it did before. */
+.tab--menu { display: none; }
 
 /* ---- Drop panel ---- */
 
@@ -564,9 +587,18 @@ img { display: block; max-width: 100%; }
   opacity: 0;
 }
 
-@media (max-width: 860px) {
+/* 900, not 860. At 861 the three left tabs finished 8px short of the
+   centred wordmark, which does not collide but reads as a squeeze. At 901
+   there is 27px. Anything narrower is a tablet and gets the Menu button. */
+@media (max-width: 900px) {
   .nav__tabs { display: none; }
-  .burger { display: block; }
+  /* Only Menu and Enquire are on screen here and both are short words, so
+     the chip can be narrower than the desktop minimum, which Programmes
+     sets. That buys the wordmark room to breathe at phone width. */
+  .tab { --tab-w: clamp(96px, 26vw, 124px); }
+  .tab--menu { display: inline-flex; }
+  /* Enquire is the one thing that never leaves. */
+  .nav__side--r .tab--cta { display: inline-flex; }
   .nav.is-open .nav__side--l .nav__tabs {
     display: flex;
     position: absolute;
@@ -576,14 +608,14 @@ img { display: block; max-width: 100%; }
     background: var(--paper);
     gap: 6px;
   }
-  .nav.is-open .nav__side--l .tab {
+  .nav.is-open .nav__side--l .nav__tabs .tab {
     flex: 1 1 0;
     min-width: 0;
     background: var(--haze);
     border-color: transparent;
     color: var(--ink);
   }
-  .nav.is-open .nav__side--l .tab[aria-expanded="true"] { background: var(--action); color: var(--paper); }
+  .nav.is-open .nav__side--l .nav__tabs .tab[aria-expanded="true"] { background: var(--action); color: var(--paper); }
   .menu { z-index: 1; }
   .menu__panel { padding-left: var(--gutter); padding-top: 82px; gap: 24px; }
 }

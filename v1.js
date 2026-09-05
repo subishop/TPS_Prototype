@@ -724,6 +724,11 @@ function mistHandoff() {
    which is precisely when the dark frame is still sliding up past the
    bar. Created after the pin exists so it measures the spacer.
    ------------------------------------------------------------ */
+// The pinned dissolve as a fraction of the whole peak act. actPeak() pins
+// for 3.2 viewport-heights inside an act that runs 4.2, so this converts a
+// position on the dissolve into a position on this trigger.
+const DISSOLVE_SPAN = 3.2 / 4.2;
+
 function navTheme() {
   const bar = document.querySelector('[data-nav]');
   const peak = document.querySelector('.act--peak');
@@ -734,7 +739,23 @@ function navTheme() {
     start: 'top top',
     end: 'bottom top',
     invalidateOnRefresh: true,
-    onUpdate: self => bar.classList.toggle('is-dark', self.progress > 0.23),
+    // Where the wordmark and the tab ink flip to white together.
+    //
+    // Two different scales meet here and they are easy to confuse. This
+    // trigger spans the whole peak act, 4.2 viewport-heights, because a
+    // toggle driven off the pin alone stops updating while the dark frame
+    // is still sliding up past the bar. The dissolve itself is only the
+    // pinned 3.2 of that. So a position measured on the dissolve has to be
+    // converted before it can be compared against self.progress, which is
+    // what DISSOLVE_SPAN does. Getting this wrong put the flip at 0.50 of
+    // the dissolve rather than 0.34, and left a stretch where dark ink sat
+    // at 3.4 to 1 waiting for a switch that had not come yet.
+    //
+    // 0.345 is the crossover: measured on the chip surface the text
+    // actually sits on, dark ink reads 4.60 and white reads 4.57 at that
+    // point, so both clear 4.5 and the 180ms cross fade cannot be caught
+    // in an unreadable state either side of it.
+    onUpdate: self => bar.classList.toggle('is-dark', self.progress > 0.345 * DISSOLVE_SPAN),
     onLeave: () => bar.classList.remove('is-dark'),
     onLeaveBack: () => bar.classList.remove('is-dark')
   });
