@@ -1405,15 +1405,11 @@ html:not(.js) .bath__img { position: static; height: 100%; transform: none; }
    frame past the fold and cut the top and bottom thumbnails off.
    ============================================================ */
 
-.act--gallery {
-  background: var(--canvas);
-  min-height: 100svh;
-  display: grid;
-  align-content: center;
-  padding-block: clamp(48px, 8vh, 96px);
-}
+/* The gallery now lives inside the programmes act, under its heading and
+   above the day counts, so it no longer carries a section of its own. */
 
 .gal {
+  margin-bottom: clamp(48px, 8vh, 96px);
   --gal-h: min(66svh, 620px);
   --gal-gap: 10px;
   --gal-n: 6;          /* set from JS at init to the real item count */
