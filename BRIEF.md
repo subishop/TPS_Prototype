@@ -82,12 +82,22 @@ would smooth over the exact cut (afternoon to evening) the page is built around.
 **Fingerprint gate:** the registry at `scrollcraft/FINGERPRINTS.md` is empty,
 this being the first build, so the gate passes with nothing to clear.
 
-**Signature move: the day-clock rail.** A hairline down the left edge carrying a
-time in IBM Plex Mono that advances continuously with scroll, 07:00 to 22:00,
-with a tick that travels the rule. Bespoke, driven off scroll progress, not a
-kit device. It is sanctioned by the brand's own component spec, which restricts
-mono section numbering to "genuinely sequential content: a process, a timeline,
-the stages of a programme." A day is all three.
+**Signature move: REMOVED 2026-09-05, none currently in its place.**
+
+It was the day-clock rail: a hairline down the left edge carrying a time in
+IBM Plex Mono that advanced continuously with scroll, 07:00 to 22:00, with a
+tick travelling the rule. Bespoke, driven off scroll progress rather than a
+kit device, and sanctioned by the brand's own component spec, which allows
+mono numbering for "genuinely sequential content: a process, a timeline, the
+stages of a programme."
+
+TJ removed it on sight. The markup, styles, `dayClock()` and its verification
+tool are gone; the acts keep `data-time`, which now only feeds the audit tool.
+
+This leaves the build without a signature move, which is a standing gap
+against the skill's own rule of one bespoke interaction per page. The
+chaptered day is still the grammar, so a replacement should come from the
+same idea rather than be bolted on. Not yet decided.
 
 ## The score
 

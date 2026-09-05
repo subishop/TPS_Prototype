@@ -35,29 +35,37 @@ const MIST_PIN_VH = 1.46;
    display face swaps in.
    ------------------------------------------------------------ */
 function splitLines(el) {
-  const text = el.textContent.trim();
-  const words = text.split(/\s+/);
-  el.textContent = '';
-
-  // Lay every word out individually so we can read its offsetTop.
-  const probes = words.map(w => {
-    const s = document.createElement('span');
-    s.textContent = w;
-    s.style.display = 'inline-block';
-    el.appendChild(s);
-    el.appendChild(document.createTextNode(' '));
-    return s;
-  });
+  // A <br> in the source is an instruction, not a suggestion. Everything else
+  // still breaks wherever the measured line boxes fall, so a heading can pin
+  // the one break that carries meaning and let the rest wrap naturally.
+  const segments = el.innerHTML.split(/<br\s*\/?>/i)
+    .map(seg => seg.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').trim())
+    .filter(Boolean);
 
   const rows = [];
-  let currentTop = null;
-  probes.forEach((s, i) => {
-    const top = s.offsetTop;
-    if (currentTop === null || Math.abs(top - currentTop) > 4) {
-      rows.push([]);
-      currentTop = top;
-    }
-    rows[rows.length - 1].push(words[i]);
+  segments.forEach(segment => {
+    const words = segment.split(/\s+/);
+    el.textContent = '';
+
+    // Lay every word out individually so we can read its offsetTop.
+    const probes = words.map(w => {
+      const s = document.createElement('span');
+      s.textContent = w;
+      s.style.display = 'inline-block';
+      el.appendChild(s);
+      el.appendChild(document.createTextNode(' '));
+      return s;
+    });
+
+    let currentTop = null;
+    probes.forEach((s, i) => {
+      const top = s.offsetTop;
+      if (currentTop === null || Math.abs(top - currentTop) > 4) {
+        rows.push([]);
+        currentTop = top;
+      }
+      rows[rows.length - 1].push(words[i]);
+    });
   });
 
   el.textContent = '';
@@ -234,6 +242,11 @@ function actPan() {
 
   // Measure the overflow rather than assuming it. A rail narrower than the
   // viewport travels zero and the act becomes a motionless pinned screen.
+  //
+  // Held as a named tween because the per item entrances below need to be
+  // driven by it, not by scroll position.
+  const railTween = gsap.to(rail, { x: () => -measure(), ease: 'none' });
+
   ScrollTrigger.create({
     trigger: act,
     start: 'top top',
@@ -245,12 +258,23 @@ function actPan() {
     scrub: 0.8,
     refreshPriority: 2,
     invalidateOnRefresh: true,
-    animation: gsap.to(rail, { x: () => -measure(), ease: 'none' })
+    animation: railTween
   });
 
-  // Items settle in sequence, so the rail reads as a drawer being pulled
-  // rather than a slideshow. The first item is exempt: a pan act needs its
-  // opening content already present.
+  // Each item settles as it crosses in from the right edge.
+  //
+  // This used to be keyed to 'top 92%', a vertical position, on elements that
+  // only ever move horizontally inside a pinned stage. Their tops barely
+  // change, so all four fired within a frame of each other the moment the act
+  // arrived, and the stagger the code was written for never happened. The
+  // empty `containerAnimation: null` was the hook for exactly this and was
+  // left unset. Pointing it at the rail tween makes the trigger read
+  // horizontal progress along the rail instead, so a card animates when it
+  // actually enters the frame, at whatever pace the reader is scrolling.
+  //
+  // The intro block is exempt: it carries the heading and has to be present
+  // the moment the act lands. Card one is not exempt, but it starts on screen
+  // on desktop, so it settles immediately and reads as simply being there.
   const items = gsap.utils.toArray('.rail__item', rail).slice(1);
   items.forEach(item => {
     gsap.fromTo(item,
@@ -259,8 +283,8 @@ function actPan() {
         opacity: 1, y: 0, duration: 0.6, ease: EASE,
         scrollTrigger: {
           trigger: item,
-          containerAnimation: null,
-          start: 'top 92%',
+          containerAnimation: railTween,
+          start: 'left 92%',
           once: true
         }
       }
@@ -366,139 +390,6 @@ function actFlow() {
       scrollTrigger: { trigger: block, start: 'top 88%', once: true }
     });
   });
-}
-
-/* ------------------------------------------------------------
-   THE DAY-CLOCK RAIL — signature move
-   One hairline. The time advances with scroll across the narrative,
-   07:00 to 22:00. A tick travels the rule. The label names the act.
-   ------------------------------------------------------------ */
-function dayClock() {
-  const clock = document.querySelector('[data-clock]');
-  if (!clock) return;
-
-  const timeEl = clock.querySelector('[data-clock-time]');
-  const tickEl = clock.querySelector('[data-clock-tick]');
-  const labelEl = clock.querySelector('[data-clock-label]');
-  const acts = gsap.utils.toArray('[data-act][data-time]');
-  if (!acts.length) return;
-
-  const first = acts[0];
-  const last = document.querySelector('.act--night') || acts[acts.length - 1];
-
-  const toMinutes = t => {
-    const [h, m] = t.split(':').map(Number);
-    return h * 60 + m;
-  };
-  // Round the whole figure, then split it. Rounding the minutes on their own
-  // and taking them modulo 60 threw the carry away, so every value from :57.5
-  // to :59 printed as the top of the hour it had just left. Scrolling through
-  // the afternoon the readout went 13:45, 13:00, 14:10: the one number on the
-  // page whose only job is to always move forward, going backwards.
-  const fmt = mins => {
-    const t = Math.round(mins / 5) * 5;
-    const h = Math.floor(t / 60) % 24;
-    return String(h).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0');
-  };
-
-  const END = toMinutes('22:00');
-
-  // The clock has to agree with the copy. A single linear ramp across the
-  // whole page put 17:40 on screen beside a line reading "Seven in the
-  // evening", so the time is interpolated act by act instead: each act
-  // declares the hour it opens on, and the readout travels between them.
-  // An act's document position is normally the same thing as the scroll
-  // position it takes the screen at. The bath is the exception: it is dragged
-  // up underneath the hero by a negative margin so it can rise out of the fog,
-  // which puts its measured top half a viewport down the page while the hero
-  // is still pinned and filling the frame. Reading the band boundary off the
-  // DOM there announces 08:30 over the bedroom. So an overlapped act declares
-  // where its band really starts, in viewport heights, and the clock uses that
-  // instead of its position in the document.
-  const BAND_START = { bath: MIST_PIN_VH };
-  const actKey = el => (el.className.match(/act--([a-z]+)/) || [])[1];
-  const bandTop = el => {
-    const declared = BAND_START[actKey(el)];
-    return declared != null
-      ? window.innerHeight * declared
-      : el.getBoundingClientRect().top + window.scrollY;
-  };
-
-  let bands = [];
-  const measure = () => {
-    const tops = acts.map(bandTop);
-    bands = acts.map((el, i) => ({
-      top: tops[i],
-      bottom: i + 1 < acts.length ? tops[i + 1] : tops[i] + el.offsetHeight,
-      from: toMinutes(el.dataset.time),
-      el
-    }));
-    bands.forEach((b, i) => { b.to = bands[i + 1] ? bands[i + 1].from : END; });
-    ruleH = clock.querySelector('.clock__rule').getBoundingClientRect().height;
-  };
-
-  let ruleH = 0;
-  measure();
-
-  ScrollTrigger.create({
-    trigger: first,
-    start: 'top top',
-    endTrigger: last,
-    // Until the night act has actually left the top of the screen, not until
-    // its foot reaches the bottom of it. Ending at "bottom bottom" stopped the
-    // rail a full viewport early, which switched it off before the night act
-    // was read and froze the readout at 21:25. The arc the rail exists to draw
-    // is 07:00 to 22:00, so it has to be allowed to arrive.
-    end: 'bottom top',
-    onRefresh: measure,
-    onUpdate: self => {
-      const y = self.scroll();
-      let band = bands[0];
-      for (const b of bands) { if (y >= b.top - 1) band = b; }
-      const span = Math.max(1, band.bottom - band.top);
-      const local = Math.min(1, Math.max(0, (y - band.top) / span));
-      timeEl.textContent = fmt(band.from + (band.to - band.from) * local);
-      tickEl.style.transform = 'translateY(' + (self.progress * ruleH) + 'px)';
-      if (band.el.dataset.label) labelEl.textContent = band.el.dataset.label;
-    },
-    onToggle: self => clock.classList.toggle('is-on', self.isActive),
-    // Measures where everything else ended up, so it goes last.
-    refreshPriority: -1,
-    invalidateOnRefresh: true
-  });
-
-  // The rail is ink on a multiply blend, which disappears against the dark
-  // night photograph. Rather than invert it mid-dissolve, it steps aside for
-  // the peak entirely: that act's plate already names the time in prose, so
-  // the readout is redundant exactly there, and the one moment the page is
-  // built around is better with nothing competing in the margin.
-  // Both full-bleed acts run edge to edge, so the rail would sit on top of
-  // a rail card or a photograph rather than in a margin. It steps aside for
-  // them and returns for the document-like acts either side.
-  // Same correction as the bands, but not the same number. The bath's
-  // document top sits above the fold, so "top 70%" is already behind us at
-  // scroll zero and the rail hid itself over the hero, where it belongs on
-  // screen. It then has to leave again before the fog thins, not when the
-  // bath section formally begins: the rail is opaque and the bath is
-  // full bleed, so a late exit means a white chip sitting on the
-  // photograph. Half a viewport in, the veil is at its peak and covering
-  // the rail, so the 400ms fade underneath it is never seen.
-  const AWAY_START = { bath: 0.5 };
-  let away = 0;
-  document.querySelectorAll('[data-clock-away]').forEach(section => {
-    const declared = AWAY_START[actKey(section)];
-    ScrollTrigger.create({
-      trigger: section,
-      start: declared != null ? () => window.innerHeight * declared : 'top 70%',
-      end: 'bottom 30%',
-      onToggle: self => {
-        away += self.isActive ? 1 : -1;
-        clock.classList.toggle('is-away', away > 0);
-      }
-    });
-  });
-
-  window.addEventListener('resize', measure);
 }
 
 /* ------------------------------------------------------------
@@ -1127,7 +1018,6 @@ function boot() {
   actPeak();
   actNight();
   actFlow();
-  dayClock();
   gallery();
   mistHandoff();
   navTheme();

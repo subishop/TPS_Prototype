@@ -143,29 +143,19 @@
 
 <div class="veil" data-veil hidden></div>
 
-<!-- ============================================================
-     THE DAY-CLOCK RAIL — the signature move.
-     A hairline down the left edge. The time advances with scroll
-     across the narrative, 07:00 to 22:00, and a tick travels the rule.
-     ============================================================ -->
-<div class="clock" aria-hidden="true" data-clock>
-  <span class="clock__time" data-clock-time>07:00</span>
-  <span class="clock__rule"><span class="clock__tick" data-clock-tick></span></span>
-  <span class="clock__label" data-clock-label>she arrives</span>
-</div>
-
 <main>
 
 <!-- ============ ACT 1 · 07:00 · ARRIVAL ============
      pin + focus pull + kinetic lines. The room resolves out of blur. -->
-<section class="act act--hero" data-act data-time="07:00" data-label="she arrives">
+<section class="act act--hero" data-act data-time="07:00">
   <div class="stage" data-stage>
     <div class="stage__media">
       <img data-focus src="assets/img/s2-handoff.webp" alt="A specialist passing the swaddled baby to the mother resting in bed" width="2000" height="1116" />
     </div>
     <div class="scrim scrim--lead"></div>
     <div class="stage__copy">
-      <h1 class="display display--xl" data-kinetic>The baby is held. So are you.</h1>
+      <h1 class="display display--xl" data-kinetic>Live-in postpartum care,<br />for you and your baby.</h1>
+      <p class="script" data-fade="0.2">Because mum needs looking after too.</p>
       <p class="lede" data-fade="0.35">Live-in postpartum care, for you and your baby. A trained specialist stays with you, from five days to thirty.</p>
       <a class="btn btn--primary" href="#programmes" data-fade="0.5">Book a consultation</a>
     </div>
@@ -216,7 +206,7 @@
      Pulled up over the hero's pin spacer in CSS so the scene is already
      sitting in position by the time the fog is dense. The whole scene
      carries one opacity, so nothing leaks over the hero while it waits. -->
-<section class="act act--bath" data-act data-clock-away data-time="08:30" data-label="the bath">
+<section class="act act--bath" data-act data-time="08:30">
   <div class="bath" data-bath>
     <!-- The ground the steam finally dissolves into. It arrives late and
          underneath, once the steam above it is dense enough to hide the
@@ -240,7 +230,7 @@
 
 <!-- ============ ACT 2 · 09:30 · REST ============
      reveal. A wipe up a full-bleed frame. -->
-<section class="act act--rest" data-act data-clock-away data-time="09:30" data-label="you go back to bed">
+<section class="act act--rest" data-act data-time="09:30">
   <div class="wrap wrap--narrow">
     <p class="say" data-fade>You go back to bed. She takes the morning.</p>
   </div>
@@ -252,13 +242,13 @@
 
 <!-- ============ ACT 3 · 11:00 · THE TREATMENT ============
      parallax + cross-fade. The frame drifts closer. This is the differentiator. -->
-<section class="act act--treatment" data-act data-time="11:00" data-label="the treatment">
+<section class="act act--treatment" data-act data-time="11:00">
   <div class="stage stage--split" data-stage>
     <div class="stage__frame">
       <div class="xfade" data-xfade>
-        <img class="xfade__img" src="assets/img/massage.webp" alt="A postpartum massage being given at home" width="1920" height="1072" />
-        <img class="xfade__img" src="assets/img/stones.webp" alt="Hot stone therapy laid out for a postpartum treatment" width="1920" height="1072" />
-        <img class="xfade__img" src="assets/img/bind.webp" alt="Traditional belly binding being wrapped" width="1920" height="1072" />
+        <img class="xfade__img" src="assets/img/massage.webp" alt="A postpartum massage being given at home" width="1920" height="2100" />
+        <img class="xfade__img" src="assets/img/stones.webp" alt="Hot stone therapy laid out for a postpartum treatment" width="1920" height="2384" />
+        <img class="xfade__img" src="assets/img/bind.webp" alt="Traditional belly binding being wrapped" width="1920" height="2384" />
       </div>
     </div>
     <div class="stage__side">
@@ -271,7 +261,7 @@
 
 <!-- ============ ACT 4 · 13:00 · FOUR KINDS OF CARE ============
      pan. Lateral travel reads as breadth. -->
-<section class="act act--pan band" data-act data-clock-away data-time="13:00" data-label="lunch">
+<section class="act act--pan band" data-act data-time="13:00">
   <div class="stage" data-stage>
     <div class="rail" data-rail>
 
@@ -283,28 +273,28 @@
       <article class="rail__item card">
         <span class="num">01</span>
         <h3 class="card__title">Mother and baby</h3>
-        <figure class="card__media"><img src="assets/img/home.webp" alt="A mother resting on the sofa while her specialist holds the baby beside her" width="1200" height="800" /></figure>
+        <figure class="card__media"><img src="assets/img/home.webp" alt="A mother resting on the sofa while her specialist holds the baby beside her" width="1920" height="1072" /></figure>
         <p class="body">Your baby cared for while you rest. Someone with you on the first walk outside.</p>
       </article>
 
       <article class="rail__item card">
         <span class="num">02</span>
         <h3 class="card__title">Treatments</h3>
-        <figure class="card__media"><img src="assets/img/stones.webp" alt="Hot stones laid out ready for a postpartum massage" width="1200" height="800" /></figure>
+        <figure class="card__media"><img src="assets/img/stones.webp" alt="Hot stones laid out ready for a postpartum massage" width="1920" height="2384" /></figure>
         <p class="body">Belly binding daily. Herbal baths daily. Thermal blanket treatment through the week.</p>
       </article>
 
       <article class="rail__item card">
         <span class="num">03</span>
         <h3 class="card__title">Meals</h3>
-        <figure class="card__media"><img src="assets/img/meal.webp" alt="A warm postpartum recovery meal of salmon and vegetables" width="1200" height="800" /></figure>
+        <figure class="card__media"><img src="assets/img/meal.webp" alt="A warm postpartum recovery meal of salmon and vegetables" width="1920" height="1072" /></figure>
         <p class="body">Three fresh meals a day, cooked in your own kitchen, for you and your family.</p>
       </article>
 
       <article class="rail__item card">
         <span class="num">04</span>
         <h3 class="card__title">Home</h3>
-        <figure class="card__media"><img src="assets/img/cover.webp" alt="A nursery kept ready, cot made and clothes folded" width="1200" height="800" /></figure>
+        <figure class="card__media"><img src="assets/img/cover.webp" alt="A nursery kept ready, cot made and clothes folded" width="1920" height="1072" /></figure>
         <p class="body">Laundry, ironing, light cleaning, the baby wardrobe organised, the groceries collected.</p>
       </article>
 
@@ -319,7 +309,7 @@
 <!-- ============ ACT 5 · 15:00 → 19:00 · THE DISSOLVE ============
      PEAK. pin + cross-dissolve. Same sofa. The daylight leaves it.
      The frame must not move, or the point is lost. -->
-<section class="act act--peak" data-act data-clock-away data-time="15:00" data-label="the afternoon">
+<section class="act act--peak" data-act data-time="15:00">
   <div class="stage" data-stage>
     <div class="stage__media dissolve" data-dissolve>
       <img class="dissolve__day"   src="assets/img/care.webp"  alt="A mother resting on the sofa in the afternoon while her specialist holds the baby beside her" width="1920" height="1072" />
@@ -340,7 +330,7 @@
 
 <!-- ============ ACT 6 · 22:00 · NIGHT ============
      reveal, then stillness. Authored silence. -->
-<section class="act act--night" data-act data-time="22:00" data-label="the night">
+<section class="act act--night" data-act data-time="22:00">
   <div class="wrap wrap--narrow">
     <p class="say" data-fade>You sleep. Someone else is awake.</p>
     <p class="script">And in the morning, she is still here.</p>
@@ -355,11 +345,11 @@
      ring. Clicking a thumbnail flies the new frame in from slightly
      deeper in the page rather than crossfading it flat.
 
-     Carries no data-time on purpose. The day clock interpolates act by
-     act in document order and finishes on the night act, so a 12:00
-     declared down here would run the readout backwards from 22:00.
+     Carries no data-time. It was written to avoid running the day clock's
+     readout backwards from 22:00, and that rail has since been removed, so
+     nothing reads the attribute now either way.
      NOTE: images are placeholders from the starter pack, to be swapped. -->
-<section class="act act--gallery" data-act data-label="the treatments">
+<section class="act act--gallery" data-act>
   <div class="wrap">
     <div class="gal" data-gallery>
 
@@ -434,7 +424,7 @@
 
 <!-- ============ ACT 7 · PROGRAMMES ============
      flow + in. The story is over. This answers the question it raised. -->
-<section class="act act--programmes" id="programmes" data-act data-label="programmes">
+<section class="act act--programmes" id="programmes" data-act>
   <div class="wrap">
 
     <header class="sec-head" data-in>
@@ -481,7 +471,7 @@
 
 <footer class="foot">
   <div class="wrap">
-    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="120" height="120" />
+    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="700" height="900" />
     <p class="micro">The Postpartum Suite &middot; Prototype &middot; Act sequence v1</p>
   </div>
 </footer>
