@@ -1291,3 +1291,176 @@ html:not(.js) .bath__img { position: static; height: 100%; transform: none; }
     transform: none;
   }
 }
+
+
+/* ============================================================
+   TREATMENT GALLERY
+   Picker left under a counter, copy centre, framed frame right.
+
+   Everything is sized off one height token rather than off widths, so
+   the whole component fits a single screen: the picker and the frame
+   are both exactly --gal-h tall, and their widths fall out of the
+   aspect ratio. Sizing this from the width instead is what pushed the
+   frame past the fold and cut the top and bottom thumbnails off.
+   ============================================================ */
+
+.act--gallery {
+  background: var(--canvas);
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  padding-block: clamp(48px, 8vh, 96px);
+}
+
+.gal {
+  --gal-h: min(66svh, 620px);
+  --gal-gap: 10px;
+  --gal-n: 6;          /* set from JS at init to the real item count */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 48px);
+  align-items: center;
+}
+@media (min-width: 1000px) {
+  .gal {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: clamp(36px, 5vw, 80px);
+  }
+}
+
+.gal__picker, .gal__copy, .gal__frame { min-width: 0; }
+
+/* ---- Picker ---- */
+
+.gal__count {
+  font-family: var(--f-mono);
+  font-size: .78rem;
+  letter-spacing: .08em;
+  margin: 0 0 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.gal__count-now { color: var(--ink); }
+.gal__count-total { color: var(--ink-mute); }
+
+.gal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 1000px) {
+  /* The column is exactly as tall as the frame beside it, and the rows
+     share that height between them, so any number of treatments fits
+     without the list ever running past the fold. */
+  .gal__list {
+    flex-direction: column;
+    overflow: visible;
+    gap: var(--gal-gap);
+  }
+  /* Thumb height is computed from the shared height token rather than
+     taken as a percentage of a flex row. A percentage height needs a
+     definite parent height to resolve against; when it could not, the
+     button fell back to auto and sized itself to the image's natural
+     400x320, which blew the column far past the fold. */
+  .gal__thumb {
+    width: auto;
+    height: calc((var(--gal-h) - var(--gal-gap) * (var(--gal-n) - 1)) / var(--gal-n));
+  }
+}
+.gal__row { flex: 0 0 auto; }
+
+.gal__thumb {
+  display: block;
+  width: clamp(64px, 15vw, 88px);
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-badge);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--haze);
+  opacity: .45;
+  filter: saturate(.65);
+  transition: opacity 340ms var(--ease-out), filter 340ms var(--ease-out);
+}
+.gal__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal__thumb.is-active { opacity: 1; filter: none; }
+@media (hover: hover) and (pointer: fine) {
+  .gal__thumb:hover { opacity: .8; }
+  .gal__thumb.is-active:hover { opacity: 1; }
+}
+
+/* ---- Copy ---- */
+
+.gal__heading { margin-bottom: .8rem; }
+.gal__meta {
+  font-family: var(--f-body);
+  font-size: .74rem;
+  letter-spacing: .06em;
+  color: var(--ink-mute);
+  margin: 0 0 1.4rem;
+}
+.gal__body { max-width: 38ch; margin-bottom: 1.6rem; }
+.gal__name {
+  font-family: var(--f-body);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* ---- Frame ---- */
+
+.gal__frame { position: relative; justify-self: end; }
+
+/* The ring sits outside the media rather than on it, so the accent never
+   crops the photograph and the corner radii stay concentric. */
+.gal__ring {
+  position: absolute;
+  inset: clamp(-24px, -1.6vw, -16px);
+  border: 1.5px solid var(--coral-deep);
+  border-radius: clamp(28px, 2.6vw, 42px);
+  pointer-events: none;
+}
+
+.gal__media {
+  position: relative;
+  height: var(--gal-h);
+  aspect-ratio: 4 / 5;
+  width: auto;
+  border-radius: clamp(18px, 1.8vw, 28px);
+  overflow: hidden;
+  background: var(--haze);
+}
+.gal__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: opacity;
+}
+.gal__img + .gal__img { opacity: 0; }
+
+/* The flying copy of a thumbnail on its way to the frame. */
+.gal__ghost {
+  position: fixed;
+  z-index: 55;
+  object-fit: cover;
+  pointer-events: none;
+  will-change: left, top, width, height;
+}
+
+@media (max-width: 999px) {
+  .gal { --gal-h: auto; }
+  .gal__ring { inset: -12px; border-radius: 22px; }
+  .gal__media { height: auto; width: 100%; aspect-ratio: 4 / 3; }
+  .gal__frame { justify-self: stretch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gal__img, .gal__thumb { transition-duration: .01s; }
+}
