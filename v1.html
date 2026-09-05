@@ -347,6 +347,91 @@
   </div>
 </section>
 
+<!-- ============ THE TREATMENTS ============
+     Sits after the day story closes, before the programmes, so it reads
+     as a catalogue of the care rather than a moment inside the day.
+     Three columns: the picker holds the left under a counter, the copy
+     sits in the middle, and the chosen frame plays on the right inside a
+     ring. Clicking a thumbnail flies the new frame in from slightly
+     deeper in the page rather than crossfading it flat.
+
+     Carries no data-time on purpose. The day clock interpolates act by
+     act in document order and finishes on the night act, so a 12:00
+     declared down here would run the readout backwards from 22:00.
+     NOTE: images are placeholders from the starter pack, to be swapped. -->
+<section class="act act--gallery" data-act data-label="the treatments">
+  <div class="wrap">
+    <div class="gal" data-gallery>
+
+      <div class="gal__picker">
+        <p class="gal__count">
+          <span class="gal__count-now" data-gal-index>01</span><span class="gal__count-total"> / 06</span>
+        </p>
+        <ul class="gal__list">
+          <li class="gal__row">
+            <button class="gal__thumb is-active" type="button" data-gal-item
+              data-index="01" data-title="Postpartum massage" data-body="Warm oil and slow pressure, worked around what is still tender. Four times a week on the longer programmes."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/product_tennis-racket_02.jpg?width=1200" aria-pressed="true" aria-label="Postpartum massage">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/product_tennis-racket_02.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+          <li class="gal__row">
+            <button class="gal__thumb" type="button" data-gal-item
+              data-index="02" data-title="Belly binding" data-body="Wrapped daily and adjusted as the swelling goes down. The part mothers say they miss once it stops."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/product_football-boot_01.jpg?width=1200" aria-pressed="false" aria-label="Belly binding">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/product_football-boot_01.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+          <li class="gal__row">
+            <button class="gal__thumb" type="button" data-gal-item
+              data-index="03" data-title="Herbal bath" data-body="Drawn warm and steeped with herbs, the way the forty days have always been kept."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/texture_fabric-macro_01.jpg?width=1200" aria-pressed="false" aria-label="Herbal bath">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/texture_fabric-macro_01.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+          <li class="gal__row">
+            <button class="gal__thumb" type="button" data-gal-item
+              data-index="04" data-title="Foot reflexology" data-body="Once a week, at the end of a day you spent lying down. Circulation, not indulgence."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/product_shoe_01.jpg?width=1200" aria-pressed="false" aria-label="Foot reflexology">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/product_shoe_01.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+          <li class="gal__row">
+            <button class="gal__thumb" type="button" data-gal-item
+              data-index="05" data-title="Facial massage" data-body="Short, quiet, and yours. Fifteen minutes where nobody needs anything from you."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/texture_tennis-macro_01.jpg?width=1200" aria-pressed="false" aria-label="Facial massage">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/texture_tennis-macro_01.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+          <li class="gal__row">
+            <button class="gal__thumb" type="button" data-gal-item
+              data-index="06" data-title="Full body scrub" data-body="Prepared fresh in your own kitchen rather than brought in. Once a stay, twice on the thirty day."
+              data-img="https://annnimate.b-cdn.net/preview-assets/vanta/product_ball_02.jpg?width=1200" aria-pressed="false" aria-label="Full body scrub">
+              <img src="https://annnimate.b-cdn.net/preview-assets/vanta/product_ball_02.jpg?width=320" alt="" loading="lazy" />
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="gal__copy">
+        <h2 class="display display--lg gal__heading">Hands on care.</h2>
+        <p class="gal__meta">The Postpartum Suite / Treatments / Every programme</p>
+        <p class="body gal__body" data-gal-body>Warm oil and slow pressure, worked around what is still tender. Four times a week on the longer programmes.</p>
+        <p class="gal__name" data-gal-title>Postpartum massage</p>
+      </div>
+
+      <div class="gal__frame">
+        <div class="gal__ring"></div>
+        <div class="gal__media">
+          <img class="gal__img" data-gal-img src="https://annnimate.b-cdn.net/preview-assets/vanta/product_tennis-racket_02.jpg?width=1200" alt="Postpartum massage" />
+          <img class="gal__img" data-gal-img alt="" aria-hidden="true" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ============ ACT 7 · PROGRAMMES ============
      flow + in. The story is over. This answers the question it raised. -->
 <section class="act act--programmes" id="programmes" data-act data-label="programmes">

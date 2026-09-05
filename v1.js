@@ -969,6 +969,152 @@ function meshDrift() {
 }
 
 /* ------------------------------------------------------------
+   TREATMENT GALLERY
+   Click a thumbnail, the frame plays large on the right with its
+   detail. Two stacked <img> elements crossfade rather than one whose
+   src is swapped: changing src on a live element shows a blank frame
+   while the new file decodes, and on a slow connection that reads as
+   the component breaking.
+
+   The incoming frame also arrives from slightly deeper in the page,
+   which is the fly-in feel borrowed from the starter pack rather than
+   a flat dissolve.
+   ------------------------------------------------------------ */
+function gallery() {
+  const root = document.querySelector('[data-gallery]');
+  if (!root) return;
+
+  const items = [...root.querySelectorAll('[data-gal-item]')];
+  const imgs = [...root.querySelectorAll('[data-gal-img]')];
+  const media = root.querySelector('.gal__media');
+  const idxEl = root.querySelector('[data-gal-index]');
+  const titleEl = root.querySelector('[data-gal-title]');
+  const bodyEl = root.querySelector('[data-gal-body]');
+  if (items.length < 2 || imgs.length < 2 || !media) return;
+
+  let front = 0;
+  let current = items[0];
+  let busy = false;
+
+  // The column divides the shared height token between however many
+  // treatments there actually are, so adding one never overflows.
+  root.style.setProperty('--gal-n', items.length);
+
+  // Warm the large frames at init. Without this the first click on each
+  // thumbnail waits on a full-size download before anything moves, which
+  // measured as multiple seconds of apparently dead UI on a cold load.
+  items.forEach(btn => {
+    if (btn.classList.contains('is-active')) return;
+    const pre = new Image();
+    pre.decoding = 'async';
+    pre.src = btn.dataset.img;
+  });
+
+  const setCopy = btn => {
+    idxEl.textContent = btn.dataset.index;
+    titleEl.textContent = btn.dataset.title;
+    bodyEl.textContent = btn.dataset.body;
+  };
+
+  const swapCopy = btn => {
+    const copy = [idxEl, bodyEl, titleEl];
+    if (REDUCED) { setCopy(btn); gsap.set(copy, { opacity: 1, y: 0 }); return; }
+    gsap.to(copy, {
+      opacity: 0, y: -8, duration: 0.2, stagger: 0.03, ease: 'none',
+      onComplete: () => {
+        setCopy(btn);
+        gsap.fromTo(copy, { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: EASE });
+      }
+    });
+  };
+
+  const show = btn => {
+    if (busy || btn === current) return;
+    busy = true;
+
+    items.forEach(b => {
+      const on = b === btn;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    current = btn;
+    swapCopy(btn);
+
+    const back = imgs[1 - front];
+    const fore = imgs[front];
+    back.src = btn.dataset.img;
+    back.alt = btn.dataset.title;
+
+    const land = () => {
+      gsap.set(back, { opacity: 1 });
+      gsap.set(fore, { opacity: 0 });
+      front = 1 - front;
+      busy = false;
+    };
+
+    if (REDUCED) { land(); return; }
+
+    // The thumbnail itself travels: a copy of it lifts off the picker,
+    // grows, and flies across into the frame, so the eye follows one
+    // object rather than watching two separate images crossfade.
+    //
+    // Animated through layout rather than transform on purpose. The two
+    // boxes share an aspect ratio so a scale would be geometrically
+    // fine, but scaling also multiplies the corner radius, and the
+    // thumbnail's 6px would land as a ~40px blob at full size.
+    const thumbImg = btn.querySelector('img');
+    const from = thumbImg.getBoundingClientRect();
+    const to = media.getBoundingClientRect();
+
+    const ghost = document.createElement('img');
+    ghost.className = 'gal__ghost';
+    ghost.src = btn.dataset.img;
+    ghost.alt = '';
+    gsap.set(ghost, {
+      left: from.left, top: from.top, width: from.width, height: from.height,
+      borderRadius: 6, opacity: 1
+    });
+    document.body.appendChild(ghost);
+
+    // Hide the source thumbnail's picture while its copy is in flight, so
+    // the same frame is not visibly in two places at once.
+    gsap.set(thumbImg, { opacity: 0 });
+    gsap.to(fore, { opacity: 0, duration: 0.3, ease: 'none' });
+
+    gsap.timeline({
+      onComplete: () => {
+        land();
+        ghost.remove();
+        gsap.set(thumbImg, { opacity: 1 });
+      }
+    })
+      // A small lift first, so it reads as picked up rather than dragged.
+      .to(ghost, { scale: 1.06, duration: 0.18, ease: 'power2.out' })
+      .to(ghost, {
+        left: to.left, top: to.top, width: to.width, height: to.height,
+        borderRadius: parseFloat(getComputedStyle(media).borderTopLeftRadius) || 22,
+        scale: 1,
+        duration: 0.62, ease: 'power3.inOut'
+      });
+  };
+
+  items.forEach(btn => btn.addEventListener('click', () => show(btn)));
+
+  root.addEventListener('keydown', e => {
+    if (!['ArrowDown','ArrowUp','ArrowLeft','ArrowRight'].includes(e.key)) return;
+    const i = items.indexOf(document.activeElement);
+    if (i === -1) return;
+    e.preventDefault();
+    const step = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : -1;
+    const next = items[(i + step + items.length) % items.length];
+    next.focus();
+    show(next);
+  });
+}
+
+
+/* ------------------------------------------------------------
    Boot. Line splitting needs real line boxes, so it waits for
    the display face rather than for DOMContentLoaded.
    ------------------------------------------------------------ */
@@ -982,6 +1128,7 @@ function boot() {
   actNight();
   actFlow();
   dayClock();
+  gallery();
   mistHandoff();
   navTheme();
   meshDrift();
