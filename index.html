@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Postpartum Suite — Live-in postpartum care</title>
+<meta name="description" content="Live-in postpartum care for you and your baby. A trained specialist stays with you, from five days to thirty, so your own recovery is the thing being looked after." />
+<link rel="icon" href="assets/img/the-postpartum-suite-logo-mark.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Karla:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION, centred lockup
+     White Desert's arrangement: a tab group left, the mark in the
+     middle, a tab group right. Transparent while it sits over the
+     opening frame, solid once the page has moved under it.
+     ============================================================ -->
+<header class="nav" data-nav>
+  <div class="nav__inner">
+
+    <div class="nav__side nav__side--l">
+      <div class="nav__tabs" data-tabs>
+        <button class="tab" type="button" data-tab="care" aria-expanded="false" aria-controls="panel-care">Care</button>
+        <button class="tab" type="button" data-tab="programmes" aria-expanded="false" aria-controls="panel-programmes">Programmes</button>
+      </div>
+    </div>
+
+    <a class="nav__brand" href="#top" aria-label="The Postpartum Suite, home">
+      <img class="nav__mark" src="assets/img/tps-mark-only.webp" alt="" width="567" height="558" />
+      <span class="nav__wordmark" aria-hidden="true">
+        <span class="wm-line wm-line--1"></span>
+        <span class="wm-line wm-line--2"></span>
+        <span class="wm-line wm-line--3"></span>
+      </span>
+    </a>
+
+    <div class="nav__side nav__side--r">
+      <div class="nav__tabs">
+        <button class="tab" type="button" data-tab="about" aria-expanded="false" aria-controls="panel-about">About</button>
+        <a class="tab tab--cta" href="#book">Book a call</a>
+      </div>
+      <button class="burger" type="button" data-burger aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="menu" data-menu hidden>
+    <section class="menu__panel" id="panel-care" data-panel="care" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">What we do</h2>
+        <ul class="menu__list">
+          <li><a href="#day">A day with your specialist</a></li>
+          <li><a href="#pillars">The four kinds of care</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Meals</a></li>
+          <li><a href="#">Home support</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">The tradition</h2>
+        <ul class="menu__list">
+          <li><a href="#">What is confinement care?</a></li>
+          <li><a href="#">Why forty days</a></li>
+          <li><a href="#">Confinement, doula or maternity nurse</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="menu__panel" id="panel-programmes" data-panel="programmes" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">Choose a length</h2>
+        <ul class="menu__list">
+          <li><a href="#programmes">Five days</a></li>
+          <li><a href="#programmes">Seven days</a></li>
+          <li><a href="#programmes">Fourteen days</a></li>
+          <li><a href="#programmes">Thirty days</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">Practical</h2>
+        <ul class="menu__list">
+          <li><a href="#">What is included</a></li>
+          <li><a href="#">Booking and dates</a></li>
+          <li><a href="#">If your baby comes early</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="menu__panel" id="panel-about" data-panel="about" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">The people</h2>
+        <ul class="menu__list">
+          <li><a href="#">Our story</a></li>
+          <li><a href="#">Meet your specialist</a></li>
+          <li><a href="#">Safety, vetting and DBS</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">Questions</h2>
+        <ul class="menu__list">
+          <li><a href="#">Frequently asked</a></li>
+          <li><a href="#">Areas we cover</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</header>
+
+<div class="veil" data-veil hidden></div>
+
+<main id="top">
+
+<!-- ============ OPENING FRAME ============ -->
+<section class="hero" data-hero>
+  <div class="hero__media">
+    <img data-focus src="assets/img/s2-handoff.webp" alt="A specialist passing the swaddled baby to the mother resting in bed" width="2000" height="1116" />
+  </div>
+  <div class="grade grade--hero"></div>
+  <div class="hero__copy">
+    <p class="kicker" data-fade>Live-in postpartum care</p>
+    <h1 class="display display--xl" data-kinetic>The baby is held. So are you.</h1>
+    <p class="lede" data-fade>A trained specialist stays with you, from five days to thirty, so your own recovery is the thing being looked after.</p>
+    <a class="btn btn--primary" href="#book" data-fade>Book a consultation</a>
+  </div>
+</section>
+
+<!-- ============================================================
+     THE DAY, the sequence
+     One pinned frame. Eight scenes cross-dissolve under it while a
+     caption and a clock change beneath. The scroll is the day.
+     ============================================================ -->
+<section class="day" id="day" data-day>
+  <div class="day__stage" data-day-stage>
+
+    <div class="day__scenes">
+      <img class="scene is-on" data-scene src="assets/img/s1-arrival.webp" alt="A specialist arriving at the front door in the morning" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s2-handoff.webp" alt="The specialist passing the swaddled baby to the mother resting in bed" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s3-rest.webp" alt="A mother resting in bed while the specialist watches the baby in the bedside cot" width="1792" height="1858" />
+      <img class="scene" data-scene src="assets/img/s4-massage.webp" alt="Hands giving a postpartum massage to a mother lying in bed" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s5-bath.webp" alt="A mother resting in a warm herbal bath, steam rising" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s6-meal.webp" alt="The specialist bringing a tray of soup and rice to the mother on the sofa" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s7-home.webp" alt="The specialist ironing while the mother rests and the baby sleeps in a basket" width="2000" height="1116" />
+      <img class="scene" data-scene src="assets/img/s8-night.webp" alt="The specialist settling the baby in the cot at night while the mother sleeps next door" width="2000" height="1116" />
+    </div>
+
+    <div class="grade grade--day"></div>
+
+    <div class="day__copy">
+      <div class="day__slot">
+        <figure class="beat is-on" data-beat data-time="07:00">
+          <figcaption><span class="beat__no">01</span><span class="beat__label">She arrives</span></figcaption>
+          <p class="beat__line">She lets herself in at seven.<br />You do not have to be awake for it.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="07:40">
+          <figcaption><span class="beat__no">02</span><span class="beat__label">The handover</span></figcaption>
+          <p class="beat__line">She takes the baby, and the morning<br />stops being yours to manage.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="09:00">
+          <figcaption><span class="beat__no">03</span><span class="beat__label">You go back to bed</span></figcaption>
+          <p class="beat__line">You sleep in the daylight,<br />which is the part nobody offers you.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="11:00">
+          <figcaption><span class="beat__no">04</span><span class="beat__label">The treatment</span></figcaption>
+          <p class="beat__line">Massage, hot stones, belly binding.<br />The care turns toward you.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="12:30">
+          <figcaption><span class="beat__no">05</span><span class="beat__label">The bath</span></figcaption>
+          <p class="beat__line">A herbal bath, drawn warm,<br />the way it has been done for forty days.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="13:30">
+          <figcaption><span class="beat__no">06</span><span class="beat__label">Lunch</span></figcaption>
+          <p class="beat__line">Three meals a day, cooked in your kitchen.<br />You do not plan any of them.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="16:00">
+          <figcaption><span class="beat__no">07</span><span class="beat__label">The house</span></figcaption>
+          <p class="beat__line">Laundry, ironing, the room reset.<br />The house keeps running without you in it.</p>
+        </figure>
+        <figure class="beat" data-beat data-time="22:00">
+          <figcaption><span class="beat__no">08</span><span class="beat__label">The night</span></figcaption>
+          <p class="beat__line">You sleep.<br />Someone else is awake.</p>
+        </figure>
+      </div>
+    </div>
+
+    <!-- The day's progress. One tick per scene, and the clock. -->
+    <div class="day__bar" aria-hidden="true">
+      <span class="day__clock" data-day-clock>07:00</span>
+      <span class="day__track"><span class="day__fill" data-day-fill></span></span>
+      <span class="day__count"><span data-day-no>01</span> / 08</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FOUR KINDS OF CARE ============ -->
+<section class="pillars" id="pillars">
+  <div class="wrap">
+    <header class="sec-head" data-in>
+      <p class="kicker kicker--ink">Every programme</p>
+      <h2 class="display display--lg">Four kinds of care,<br />every single day.</h2>
+      <p class="body body--wide">The same four, whichever programme you choose. What changes is how long they last.</p>
+    </header>
+  </div>
+
+  <div class="grid4" data-in data-stagger>
+    <article class="tile">
+      <div class="tile__media"><img src="assets/img/s2-handoff.webp" alt="A specialist passing the baby to its mother" width="1200" height="670" loading="lazy" /></div>
+      <div class="tile__body">
+        <span class="tile__no">01</span>
+        <h3 class="tile__title">Mother and baby</h3>
+        <p class="body">Your baby cared for while you rest. Someone with you on the first walk outside.</p>
+      </div>
+    </article>
+    <article class="tile">
+      <div class="tile__media"><img src="assets/img/s4-massage.webp" alt="Hands giving a postpartum massage" width="1200" height="670" loading="lazy" /></div>
+      <div class="tile__body">
+        <span class="tile__no">02</span>
+        <h3 class="tile__title">Treatments</h3>
+        <p class="body">Belly binding daily. Herbal baths daily. Massage, hot stones and reflexology through the week.</p>
+      </div>
+    </article>
+    <article class="tile">
+      <div class="tile__media"><img src="assets/img/s6-meal.webp" alt="A tray of postpartum food brought to the sofa" width="1200" height="670" loading="lazy" /></div>
+      <div class="tile__body">
+        <span class="tile__no">03</span>
+        <h3 class="tile__title">Meals</h3>
+        <p class="body">Three fresh meals a day, cooked in your own kitchen, for you and your family.</p>
+      </div>
+    </article>
+    <article class="tile">
+      <div class="tile__media"><img src="assets/img/s7-home.webp" alt="A specialist ironing in a tidied living room" width="1200" height="670" loading="lazy" /></div>
+      <div class="tile__body">
+        <span class="tile__no">04</span>
+        <h3 class="tile__title">Home</h3>
+        <p class="body">Laundry, ironing, light cleaning, the baby wardrobe organised, the groceries collected.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ PROGRAMMES ============ -->
+<section class="programmes" id="programmes">
+  <div class="wrap">
+    <header class="sec-head" data-in>
+      <p class="kicker kicker--ink">Programmes</p>
+      <h2 class="display display--lg">Same care. Longer stay.</h2>
+      <p class="body body--wide">Every programme includes the same four areas of care. The longer ones give your recovery more time, and repeat the treatments more often as it progresses.</p>
+    </header>
+
+    <div class="prog" data-in data-stagger>
+      <article class="prog__item">
+        <span class="prog__days">5</span><span class="prog__unit">days of care</span>
+        <p class="body body--mute">The first week home, covered.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">7</span><span class="prog__unit">days of care</span>
+        <p class="body body--mute">A full week, with treatments through it.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">14</span><span class="prog__unit">days of care</span>
+        <p class="body body--mute">Treatments move to a weekly rhythm.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">30</span><span class="prog__unit">days of care</span>
+        <p class="body body--mute">The full confinement period, as it is traditionally kept.</p>
+      </article>
+    </div>
+
+    <p class="note" data-in>Pricing is talked through on the call. Placeholder in this prototype: see the note in the build report.</p>
+  </div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section class="close" id="book">
+  <div class="close__media">
+    <img src="assets/img/s3-rest.webp" alt="A mother resting in bed while her specialist sits with the baby" width="1792" height="1858" loading="lazy" />
+  </div>
+  <div class="close__panel" data-in>
+    <p class="kicker kicker--ink">Ready when you are</p>
+    <h2 class="display display--lg">Start with a conversation.</h2>
+    <p class="body">Tell us your due date and what the weeks after look like from where you are standing. Nothing is booked on that call.</p>
+    <a class="btn btn--primary" href="https://calendly.com/thepostpartumsuite/30min">Book a consultation</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="110" height="110" />
+    <p class="micro">The Postpartum Suite &middot; Prototype v2 &middot; <a href="v1.html">see version 1</a></p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

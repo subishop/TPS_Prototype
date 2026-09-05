@@ -1,0 +1,1293 @@
+/* ============================================================
+   THE POSTPARTUM SUITE — scroll narrative prototype
+   Every colour, radius, measure and face below comes from
+   TPS Brand Pack.html. Nothing is introduced from outside it.
+
+   Two brand rules govern everything here:
+   no shadows anywhere, and no dark section. Depth is hairlines,
+   edges and overlap. The night photograph is dark; the page is not.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Quentin';
+  src: local('Quentin'), url('assets/font/Quentin.otf') format('opentype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* Grounds */
+  --canvas:    #F3EFEC;
+  --paper:     #FFFFFF;
+  --blush:     #E2CAC6;
+  --rose-mist: #D7C2C9;
+
+  /* Ink */
+  --ink:       #0A0A0A;
+  --ink-soft:  #2C2C2C;
+  --ink-mute:  #5A524F;
+
+  /* Coral tier */
+  --coral-mid:  #C86D58;
+  --coral-deep: #B95A4B;
+  --ember:      #A64C45;
+  --ember-deep: #8C362F;
+
+  /* Muted accents */
+  --sand: #C9B9B5;
+  --haze: #E3D7D3;
+
+  /* Role aliases. Components point here, never at a raw value. */
+  --action:       var(--ember);
+  --action-hover: var(--ember-deep);
+  --emphasis:     var(--ember);
+  --rule:         var(--sand);
+  --hairline:     rgba(10, 10, 10, .08);
+  --hairline-firm:rgba(10, 10, 10, .14);
+
+  /* Faces, five jobs */
+  --f-display: "Instrument Serif", Georgia, serif;
+  --f-body:    "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --f-read:    "Karla", ui-sans-serif, system-ui, sans-serif;
+  --f-script:  "Quentin", cursive;
+  --f-mono:    "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  /* Radius scale, held across the page */
+  --r-badge:  6px;
+  --r-button: 8px;
+  --r-card:   10px;
+  --r-media:  16px;
+
+  /* Layout */
+  --max:     1080px;
+  --measure: 62ch;
+  --gutter:  24px;
+  --section: 96px;
+  --nav-h:   72px;
+
+  /* The nav is the one row that belongs to the window rather than to the
+     article column, so it carries its own two numbers. The inset is how
+     far the tabs sit from the edge of the screen; the max is where the row
+     stops widening. 2100 clears every ordinary laptop and desktop, 1440
+     through 1920, so those all get their tabs genuinely in the corners.
+     Past it the row centres instead, because on a 3440 ultrawide, corners
+     would put the wordmark most of a metre from Book a call and the bar
+     would stop reading as one object. */
+  --nav-inset: 24px;
+  --nav-max:   2100px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (min-width: 768px)  { :root { --gutter: 28px; } }
+@media (min-width: 1100px) { :root { --gutter: 48px; } }
+@media (max-width: 700px)  { :root { --section: 64px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--f-read);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; }
+
+::selection { background: var(--blush); color: var(--ink); }
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Type ---------- */
+
+.display {
+  font-family: var(--f-display);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: .01em;
+  text-wrap: balance;
+  margin: 0;
+  color: var(--ink);
+}
+.display--xl { font-size: clamp(2.4rem, 6.2vw, 5rem); line-height: .98; }
+
+/* The hero headline is sized against the viewport's shorter axis too.
+   A desktop-only clamp wraps it to five lines on a short window and the
+   copy block then overflows the stage and clips at the top. */
+@media (max-height: 780px) {
+  .display--xl { font-size: clamp(2rem, 4.4vh, 3.2rem); }
+  .act--hero .lede { font-size: .95rem; margin-top: 1rem; }
+  .act--hero .btn--primary { margin-top: 1.2rem; padding: 12px 20px; }
+}
+@media (max-width: 700px) {
+  .display--xl { font-size: clamp(2.1rem, 8.4vw, 3rem); }
+}
+.display--lg { font-size: clamp(2rem, 4.4vw, 3.4rem); }
+.display--md { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+
+.lede {
+  font-family: var(--f-read);
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.55;
+  max-width: 46ch;
+  color: var(--ink-soft);
+  margin: 1.4rem 0 0;
+  text-wrap: pretty;
+}
+
+.body {
+  font-family: var(--f-read);
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: var(--measure);
+  color: var(--ink-soft);
+  margin: 0 0 .9rem;
+  text-wrap: pretty;
+}
+.body--mute { color: var(--ink-mute); font-size: .95rem; }
+.body--wide { max-width: 66ch; }
+
+/* The narrative line. One short sentence, set large, doing the work
+   a paragraph would do on a lesser page. */
+.say {
+  font-family: var(--f-display);
+  font-size: clamp(1.7rem, 3.6vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: .01em;
+  max-width: 22ch;
+  margin: 0;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.say--sm { font-size: clamp(1.25rem, 2.2vw, 1.8rem); max-width: 26ch; }
+.say--invert { color: var(--paper); }
+
+.script {
+  font-family: var(--f-script);
+  font-size: clamp(1.8rem, 3.4vw, 2.9rem);
+  line-height: 1.1;
+  color: var(--ember-deep);
+  margin: 1.6rem 0 0;
+}
+.script--sm { font-size: clamp(1.4rem, 2.4vw, 2rem); margin: .4rem 0 1.6rem; }
+
+.eyebrow {
+  display: block;
+  font-family: var(--f-body);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ember);
+  margin-bottom: 1rem;
+}
+
+.num {
+  font-family: var(--f-mono);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  color: var(--ember);
+  display: block;
+  margin-bottom: .9rem;
+}
+
+.caption {
+  font-family: var(--f-body);
+  font-size: .8rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  margin-top: .8rem;
+}
+
+.micro {
+  font-family: var(--f-body);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.note {
+  font-family: var(--f-body);
+  font-size: .8rem;
+  color: var(--ink-mute);
+  border-top: 1px solid var(--hairline);
+  padding-top: 1rem;
+  margin-top: 3rem;
+  max-width: 60ch;
+}
+
+/* ---------- Buttons. Soft rectangles at 8px, never pills. No shadow. ---------- */
+
+.btn {
+  display: inline-block;
+  font-family: var(--f-read);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 14px 24px;
+  border-radius: var(--r-button);
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), transform 120ms var(--ease-out);
+}
+.btn--primary { background: var(--action); color: var(--paper); }
+.btn--primary:hover { background: var(--action-hover); }
+.btn:active { transform: translateY(1px); }
+
+/* ---------- Layout ---------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.wrap--narrow { max-width: 780px; }
+
+.act { position: relative; }
+
+.band { background: var(--blush); }
+
+/* ============================================================
+   NAVIGATION, centred lockup
+   Tab group left, mark centre, tab group right.
+
+   The bar has no background of its own. Contrast comes from the
+   chips and from a theme flip: ink on the light grounds that make up
+   most of this page, and a light treatment over the one dark frame,
+   the night half of the dissolve.
+   ============================================================ */
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  background: transparent;
+}
+
+.nav__inner {
+  height: var(--nav-h);
+  /* Was max-width: var(--max), the 1080px article column, which is why the
+     tabs sat 468px from the edge of a 1920 screen and 1228px from the edge
+     of a 3440 one instead of in the corners. The cap lives in the padding
+     now, so below --nav-max the row is edge to edge and above it the extra
+     space goes to the sides. */
+  padding-inline: max(var(--nav-inset), (100% - var(--nav-max)) / 2);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+.nav__side { display: flex; align-items: center; }
+.nav__side--r { justify-content: flex-end; }
+.nav__tabs { display: flex; gap: 8px; }
+
+/* The lockup sits dead centre, composed from two files rather than the
+   single baked-in one, so the circle can survive as one continuous
+   object while the wordmark leaves without it.
+
+   Every offset below is a measured ratio, not a guess: the alpha row
+   bands of the 700x900 lockup put the circle at y 47-512 and the three
+   text lines at 598-645, 701-751 and 803-852. The separate wordmark
+   file turned out to be exactly that text block at the same scale, so
+   each number here is simply source-pixels / 900 and the composed
+   stack lines up with the original artwork. */
+.nav__brand {
+  --lockup-h: clamp(120px, 13vw, 158px);
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  justify-self: center;
+}
+
+/* The circle. It never crossfades: it contracts, so the eye tracks one
+   object from the opening lockup down into the bar. Height and top are
+   animated rather than transformed because a scale factor would need a
+   division by a custom property, which calc() cannot express. It is a
+   one-shot transition on a single fixed-position image, so the layout
+   cost is irrelevant. */
+.nav__mark {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--lockup-h) * 0.04653);
+  height: calc(var(--lockup-h) * 0.5291);
+  aspect-ratio: 567 / 558;
+  width: auto;
+  /* The global reset would otherwise cap this at 100% of a container
+     that has no normal-flow content and so collapses to zero width. */
+  max-width: none;
+  transform: translateX(-50%);
+  transition: height 520ms var(--ease-out), top 520ms var(--ease-out), filter 280ms var(--ease-out);
+  transition-delay: 0ms;
+}
+.nav.is-scrolled .nav__mark {
+  height: 34px;
+  top: 21px;
+  /* Hangs back until the wordmark has cleared out from under it. */
+  transition-delay: 240ms;
+}
+
+.nav__wordmark {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: calc(var(--lockup-h) * 0.7778);
+  height: var(--lockup-h);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* One strip per line of the wordmark, each showing its own slice of the
+   same file, so the three lines can leave independently. */
+.wm-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-image: url('assets/img/tps-wordmark.webp');
+  background-repeat: no-repeat;
+  background-size: calc(var(--lockup-h) * 0.7778) auto;
+  transition: opacity 380ms var(--ease-out), transform 380ms var(--ease-out), filter 280ms var(--ease-out);
+}
+.wm-line--1 {
+  top: calc(var(--lockup-h) * 0.66444);
+  height: calc(var(--lockup-h) * 0.05333);
+  background-position: 0 calc(var(--lockup-h) * -0.02111);
+  transition-delay: 300ms;
+}
+.wm-line--2 {
+  top: calc(var(--lockup-h) * 0.77889);
+  height: calc(var(--lockup-h) * 0.05667);
+  background-position: 0 calc(var(--lockup-h) * -0.13556);
+  transition-delay: 355ms;
+}
+.wm-line--3 {
+  top: calc(var(--lockup-h) * 0.89222);
+  height: calc(var(--lockup-h) * 0.05556);
+  background-position: 0 calc(var(--lockup-h) * -0.24889);
+  transition-delay: 410ms;
+}
+
+/* Leaving: bottom line first, collapsing upward toward the mark.
+   Returning: top line first, the stack rebuilding downward, and only
+   after the mark has finished expanding. */
+.nav.is-scrolled .wm-line { opacity: 0; transform: translateY(-10px); }
+.nav.is-scrolled .wm-line--3 { transition-delay: 0ms; }
+.nav.is-scrolled .wm-line--2 { transition-delay: 55ms; }
+.nav.is-scrolled .wm-line--1 { transition-delay: 110ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__mark, .wm-line { transition-duration: .01s; transition-delay: 0ms !important; }
+}
+
+/* Over the one dark ground on this page, the night half of the peak
+   dissolve, the black artwork would sit almost invisibly. Both files
+   are line art on a genuinely transparent ground, so a real invert
+   reads correctly rather than crushing them into silhouettes. */
+.nav.is-dark .nav__mark,
+.nav.is-dark .wm-line { filter: brightness(0) invert(1); }
+
+/* Equal-width glass chips, after white-desert.com: they tint and blur
+   whatever is behind them rather than carrying a fill of their own.
+   The call to action is deliberately not an exception, so the row reads
+   as one material.
+
+   Two tints rather than one, because this page is light almost
+   everywhere. A dark glass light enough to still look like glass would
+   need roughly 57% opacity before white text cleared 4.5:1 against the
+   canvas ground, which is a panel, not glass. So the light grounds get
+   a faint dark frost carrying ink, and the one dark ground gets the
+   reference's own dark glass carrying white. */
+.tab {
+  flex: none;
+  /* One width, not a minimum. Under min-width the labels set their own
+     size, so Programmes came out two pixels wider than the rest and the
+     row read as four near misses rather than a set. */
+  width: 124px;
+  height: 38px;
+  padding: 0 12px;
+  /* One step firmer. At 10% black on white glass the chips had no edge
+     against a pale photograph and looked like they were dissolving into
+     it rather than sitting on it. */
+  border: 1px solid var(--hairline-firm);
+  border-radius: var(--r-badge);
+  background: rgba(255, 255, 255, .55);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: .79rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  line-height: 36px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+
+.nav.is-dark .tab {
+  background: rgba(21, 15, 14, .30);
+  border-color: rgba(255, 255, 255, .26);
+  color: var(--paper);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab:hover { background: rgba(255, 255, 255, .72); }
+  .nav.is-dark .tab:hover { background: rgba(21, 15, 14, .46); }
+}
+
+/* The open panel's tab still takes the accent. That is a state, not a
+   fill, and the reference does the same thing. */
+.tab[aria-expanded="true"],
+.nav.is-dark .tab[aria-expanded="true"] {
+  background: var(--action);
+  border-color: transparent;
+  color: var(--paper);
+}
+
+/* The one exception to the glass. The call to action keeps a solid fill
+   at every scroll position and in every state, so the primary action on
+   a service people spend thousands on never dissolves into the row. */
+.tab--cta,
+.nav.is-dark .tab--cta {
+  background: var(--action);
+  border-color: transparent;
+  color: var(--paper);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tab--cta:hover,
+  .nav.is-dark .tab--cta:hover { background: var(--action-hover); }
+}
+.tab:active { transform: translateY(1px); }
+
+.burger {
+  display: none;
+  position: relative;
+  width: 42px; height: 38px;
+  border: 1px solid transparent;
+  background: rgba(227, 215, 211, .92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--r-badge);
+  cursor: pointer;
+}
+.nav.is-dark .burger { background: rgba(21,15,14,.34); border-color: rgba(255,255,255,.28); }
+.burger span {
+  position: absolute; left: 13px;
+  width: 16px; height: 1.5px;
+  background: var(--ink);
+  transition: transform 180ms var(--ease-out), background-color 280ms var(--ease-out);
+}
+.nav.is-dark .burger span { background: var(--paper); }
+.burger span:first-child { top: 16px; }
+.burger span:last-child  { top: 21px; }
+.burger[aria-expanded="true"] span:first-child { transform: translateY(2.5px) rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child  { transform: translateY(-2.5px) rotate(-45deg); }
+
+/* ---- Drop panel ---- */
+
+.menu {
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--hairline);
+  overflow: hidden;
+}
+.menu__panel[hidden] { display: none; }
+/* The panel hangs under the tab that opened it, so it follows the row
+   rather than the article column. It used to share the 1080px column with
+   the tabs and that kept them lined up; once the tabs moved to the corners
+   the content was still starting 468px in on a 1920 screen, with the tab
+   at 24, and the panel read as belonging to nothing. The columns are a
+   fixed 250px each, so widening the box does not stretch them. */
+.menu__panel {
+  padding: clamp(28px, 4vw, 44px) 0 clamp(32px, 5vw, 52px);
+  padding-inline: max(var(--nav-inset), (100% - var(--nav-max)) / 2);
+  display: grid;
+  gap: clamp(28px, 5vw, 72px);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .menu__panel { grid-template-columns: repeat(2, minmax(0, 250px)); } }
+
+.menu__head {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--ember-deep);
+  margin: 0 0 1rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.menu__list { list-style: none; margin: 0; padding: 0; }
+.menu__list li + li { border-top: 1px solid var(--hairline); }
+.menu__list a {
+  display: block;
+  padding: 10px 0;
+  font-family: var(--f-read);
+  font-size: .95rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 140ms var(--ease-out), padding-left 180ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu__list a:hover { color: var(--ink); padding-left: 8px; }
+}
+
+.veil {
+  position: fixed;
+  inset: var(--nav-h) 0 0;
+  z-index: 50;
+  background: rgba(243, 239, 236, .55);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  opacity: 0;
+}
+
+@media (max-width: 860px) {
+  .nav__tabs { display: none; }
+  .burger { display: block; }
+  .nav.is-open .nav__side--l .nav__tabs {
+    display: flex;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    z-index: 2;
+    padding: 14px var(--gutter);
+    background: var(--paper);
+    gap: 6px;
+  }
+  .nav.is-open .nav__side--l .tab {
+    flex: 1 1 0;
+    min-width: 0;
+    background: var(--haze);
+    border-color: transparent;
+    color: var(--ink);
+  }
+  .nav.is-open .nav__side--l .tab[aria-expanded="true"] { background: var(--action); color: var(--paper); }
+  .menu { z-index: 1; }
+  .menu__panel { padding-left: var(--gutter); padding-top: 82px; gap: 24px; }
+}
+
+/* ============================================================
+   THE DAY-CLOCK RAIL — signature move
+   ============================================================ */
+
+.clock {
+  position: fixed;
+  left: max(16px, calc((100vw - var(--max)) / 2 - 64px));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+  pointer-events: none;
+  /* An ink rule on a multiply blend vanished over the dark night frame and
+     drew straight through the white rail cards. An opaque chip reads as a
+     fixed instrument the page travels behind, at any ground. */
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: 40px;
+  padding: 14px 10px 16px;
+}
+.clock.is-on { opacity: 1; }
+.clock.is-on.is-away { opacity: 0; }
+
+.clock__time {
+  font-family: var(--f-mono);
+  font-size: .74rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.clock__rule {
+  position: relative;
+  width: 1px;
+  height: 34vh;
+  background: var(--hairline-firm);
+}
+.clock__tick {
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 7px;
+  height: 1px;
+  background: var(--ember);
+  will-change: transform;
+}
+.clock__label {
+  font-family: var(--f-body);
+  font-size: .62rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  writing-mode: vertical-rl;
+  max-height: 20vh;
+  overflow: hidden;
+}
+
+@media (max-width: 1000px) { .clock { display: none; } }
+
+/* ============================================================
+   STAGES
+   ============================================================ */
+
+.stage {
+  position: relative;
+  height: 100svh;
+  min-height: 540px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+/* The hero sits under a sticky 72px bar, so it takes that off its own
+   height. Without this the first screen is a viewport plus a nav tall and
+   the button drops below the fold. Height only: everything else this act
+   needs is on .stage above, and pulling those declarations down here is
+   what previously left every other stage without flex layout at all. */
+/* The bar is transparent and out of flow now, so the opening frame runs
+   the full viewport again and the photograph sits under it. */
+.act--hero .stage {
+  height: 100svh;
+  min-height: 540px;
+}
+
+.stage__media { position: absolute; inset: 0; }
+.stage__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 62% center;
+}
+
+/* Act 1: the focus pull. Blur resolves as the room does. */
+[data-focus] { will-change: filter, transform; }
+
+/* Scrims. Density only where the text sits, never a full frame. */
+.scrim { position: absolute; inset: 0; pointer-events: none; }
+/* The Brand Pack specifies "a soft light scrim where the photograph is
+   busy", not a dark one. Ink on a canvas wash, which also keeps the rule
+   that there is no dark section anywhere in this system. */
+.scrim--lead {
+  background: linear-gradient(100deg,
+    rgba(243,239,236,.90) 0%,
+    rgba(243,239,236,.80) 26%,
+    rgba(243,239,236,.48) 46%,
+    rgba(243,239,236,.10) 66%,
+    rgba(243,239,236,0)   80%);
+}
+/* Light now, because the plate carries the type. This only seats the plate
+   against the photograph so it does not float unanchored. */
+.scrim--band {
+  background: linear-gradient(to top,
+    rgba(10,10,10,.30) 0%,
+    rgba(10,10,10,.12) 26%,
+    rgba(10,10,10,0)   52%);
+}
+
+.stage__copy {
+  position: relative;
+  z-index: 2;
+  padding: 0 var(--gutter) clamp(48px, 9vh, 96px);
+  width: 100%;
+  max-width: 900px;
+}
+.stage__copy--low { padding-bottom: clamp(56px, 12vh, 120px); }
+
+.act--hero .stage__copy { max-width: 720px; }
+.act--hero .stage__copy .display { color: var(--ink); }
+.act--hero .stage__copy .lede { color: var(--ink-soft); max-width: 40ch; }
+.act--hero .btn--primary { margin-top: 1.8rem; }
+
+/* Kinetic lines: each line rises from behind a mask.
+   Masks reserve descender room so g, y, p and j keep their tails. */
+.kin-line { display: block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
+.kin-line > span { display: block; will-change: transform, opacity; }
+
+/* Hero entrance, CSS-driven. See the note in main.js: the landing headline
+   cannot be allowed to depend on a JS timeline completing. */
+@keyframes kinRise {
+  from { transform: translateY(108%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes softRise {
+  from { transform: translateY(14px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.act--hero.is-ready .kin-line > span {
+  animation: kinRise 1s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * .09s + .15s);
+}
+.act--hero.is-ready [data-fade] {
+  animation: softRise .8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * .12s + .62s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .act--hero.is-ready .kin-line > span,
+  .act--hero.is-ready [data-fade] { animation-duration: .01s; animation-delay: 0s; }
+}
+
+/* ---------- Act 2: rest ---------- */
+
+.act--rest { padding-block: var(--section); }
+.act--rest .wrap--narrow { margin-bottom: clamp(32px, 6vh, 64px); }
+
+.frame--bleed {
+  margin: 0;
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.frame--bleed img {
+  width: 100%;
+  height: clamp(320px, 68vh, 720px);
+  object-fit: cover;
+  object-position: center 42%;
+  border-radius: var(--r-media);
+}
+[data-reveal] { will-change: clip-path; }
+
+/* ---------- Act 3: the treatment ---------- */
+
+/* This is the beat that carries the whole differentiator: care turned
+   toward the mother rather than the baby. It gets more room than a split
+   layout would normally take. */
+.act--treatment {
+  padding-block: calc(var(--section) * 1.4);
+  background: var(--paper);
+}
+
+/* ------------------------------------------------------------
+   BLUSH DRIFT
+   A WebGL mesh gradient, one canvas fixed to the viewport, serving
+   the two acts between the bath and the coral band: "You go back to
+   bed" and "The care turns toward you".
+
+   Fixed rather than per section on purpose. A background painted into
+   each act would meet at their join and that meeting is a line, which
+   is the one thing this page cannot have. Being fixed, there is only
+   ever one of it and no join exists to align.
+
+   z-index -1 puts it above the page ground and below every element,
+   so it shows only where a section declines to paint its own. That is
+   also what hides its fades: the acts either side are opaque, so the
+   canvas is covered while its opacity is moving and exposed only once
+   it has arrived.
+
+   The paper ground on .act--treatment above stays as the default. It
+   is dropped only once the shader is actually running, so a browser
+   without WebGL keeps the cream and white the page has always had
+   rather than falling through to a bare canvas colour.
+   ------------------------------------------------------------ */
+.drift {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+}
+html.drift-on .act--treatment { background: transparent; }
+
+.stage--split {
+  height: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 5vw, 56px);
+  align-items: center;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  overflow: visible;
+}
+@media (min-width: 900px) {
+  .stage--split { grid-template-columns: 1.32fr .68fr; gap: clamp(36px, 5vw, 72px); }
+}
+
+.stage__frame {
+  position: relative;
+  border-radius: var(--r-media);
+  overflow: hidden;
+  aspect-ratio: 5 / 4;
+}
+@media (min-width: 900px) { .stage__frame { aspect-ratio: 4 / 3; } }
+.xfade { position: absolute; inset: 0; }
+.xfade__img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  will-change: opacity, transform;
+}
+.xfade__img:not(:first-child) { opacity: 0; }
+
+.stage__side .display { margin-bottom: 1.4rem; }
+
+/* ---------- Act 4: the rail ---------- */
+
+.act--pan .stage { align-items: center; }
+
+.rail {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(20px, 3vw, 36px);
+  padding-inline: var(--gutter);
+  will-change: transform;
+}
+.rail__item { flex: 0 0 auto; width: clamp(260px, 30vw, 380px); }
+
+.rail__intro {
+  width: clamp(300px, 34vw, 460px);
+  align-self: center;
+}
+.rail__intro .display { margin-bottom: 1.2rem; }
+
+.rail__close {
+  width: clamp(280px, 30vw, 400px);
+  align-self: center;
+  border-left: 1px solid var(--hairline-firm);
+  padding-left: clamp(20px, 3vw, 36px);
+}
+
+/* Cards: paper on the blush band, 10px, no shadow, hairline dividers. */
+.card {
+  background: var(--paper);
+  border-radius: var(--r-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  /* The rail read as a ragged set while two of the four carried an image
+     and two did not. All four now carry one, and the media grows to take
+     up whatever slack the copy leaves, so their bases line up. */
+  min-height: min(64vh, 540px);
+}
+.card__title {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 .8rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.card__media { margin: 0 0 1rem; flex: 1 1 auto; min-height: 0; }
+.card__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  object-fit: cover;
+  border-radius: var(--r-badge);
+}
+.card .body { margin-bottom: 0; }
+
+/* ---------- Act 5: the dissolve. PEAK. ---------- */
+
+.dissolve { position: absolute; inset: 0; }
+.dissolve img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 55% center;
+}
+.dissolve__night { opacity: 0; will-change: opacity; }
+
+/* The dissolve runs from a bright afternoon frame to a dark night one, so
+   no single ink colour clears contrast across it: white measured 2.8:1 over
+   the afternoon sofa. The Brand Pack already solves this on its own cover,
+   by laying a canvas plate over the photograph and setting ink on that.
+   Same device here. Legible in both lights, and it keeps the rule that no
+   section in this system is dark. */
+.act--peak .stage__copy {
+  max-width: none;
+  padding-inline: var(--gutter);
+}
+.plate {
+  background: var(--canvas);
+  border-radius: var(--r-card);
+  padding: clamp(24px, 3vw, 36px) clamp(28px, 3.4vw, 44px);
+  width: min(46ch, 100%);
+  border-top: 1px solid rgba(255,255,255,.5);
+}
+.act--peak .plate .say {
+  color: var(--ink);
+  margin-bottom: 0;
+  max-width: none;
+  font-size: clamp(1.5rem, 2.6vw, 2.3rem);
+}
+.act--peak [data-cue] { will-change: opacity, transform; }
+/* Each line occupies the same slot, so the plate does not resize as the
+   lines hand over and the frame behind it never jumps. */
+.plate__slot { display: grid; }
+.plate__slot > * { grid-area: 1 / 1; }
+
+/* ---------- Act 6: night ---------- */
+
+.act--night {
+  padding-block: clamp(96px, 18vh, 200px);
+  background: var(--rose-mist);
+  text-align: left;
+}
+
+/* ---------- Act 7: programmes ---------- */
+
+.act--programmes { padding-block: var(--section); background: var(--canvas); }
+
+.sec-head { margin-bottom: clamp(40px, 7vh, 72px); }
+.sec-head .display { margin-bottom: 1.2rem; }
+
+.prog {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--hairline-firm);
+}
+@media (min-width: 860px) { .prog { grid-template-columns: repeat(4, 1fr); } }
+
+.prog__item {
+  padding: 28px 24px 28px 0;
+  border-bottom: 1px solid var(--hairline-firm);
+  border-right: 1px solid var(--hairline-firm);
+}
+.prog__item:last-child { border-right: none; }
+@media (min-width: 860px) { .prog__item { border-bottom: none; } }
+
+.prog__days {
+  display: block;
+  font-family: var(--f-display);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.prog__unit {
+  display: block;
+  font-family: var(--f-body);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: .5rem 0 1rem;
+}
+
+.close {
+  margin-top: clamp(56px, 10vh, 110px);
+  padding-top: clamp(32px, 5vh, 56px);
+  border-top: 1px solid var(--hairline);
+}
+
+/* ---------- Footer ---------- */
+
+.foot {
+  background: var(--canvas);
+  padding-block: clamp(48px, 8vh, 88px);
+  border-top: 1px solid var(--hairline);
+}
+.foot__mark { width: 84px; height: auto; margin-bottom: 1.4rem; }
+
+/* ---------- Entrances ---------- */
+
+[data-fade], [data-in] > *, [data-reveal] { }
+.js [data-fade] { opacity: 0; }
+.js [data-in] > * { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-fade], .js [data-in] > * { opacity: 1 !important; transform: none !important; }
+  [data-focus] { filter: none !important; transform: none !important; }
+  .dissolve__night { opacity: .5; }
+  .xfade__img:not(:first-child) { opacity: 0; }
+}
+
+/* ============================================================
+   PHONE: the photography has to survive the crop
+
+   Every source frame is 16:9 and every full-bleed act was filling a
+   portrait viewport with object-fit: cover, so a phone was showing
+   roughly a quarter of each image's width. The mother was being cropped
+   out of her own photographs, which breaks the one imagery rule the
+   Brand Pack states outright: she is the subject, the baby is context.
+
+   So on a phone the media stops filling the screen and takes a 4:3 block
+   at the top of each act, with the copy under it on the page ground.
+   About three quarters of each frame survives that, and the reading
+   order is unchanged.
+   ============================================================ */
+@media (max-width: 700px) {
+
+  /* Hero */
+  .act--hero .stage {
+    height: auto;
+    min-height: 0;
+    display: block;
+    background: var(--canvas);
+  }
+  .act--hero .stage__media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .act--hero .stage__media img { object-position: 60% center; }
+  .act--hero .scrim--lead { display: none; }
+  .act--hero .stage__copy {
+    padding: clamp(24px, 5vh, 36px) var(--gutter) clamp(40px, 7vh, 56px);
+    max-width: none;
+  }
+
+  /* Act 2, the wipe frame */
+  .frame--bleed img { height: auto; aspect-ratio: 4 / 3; object-position: center 38%; }
+
+  /* Act 5, the dissolve. The plate comes out from over the photograph and
+     sits under it, so neither the frame nor the line has to give way. */
+  .act--peak .stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(20px, 4vh, 32px);
+    background: var(--canvas);
+  }
+  .act--peak .dissolve {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    flex: none;
+  }
+  .act--peak .scrim--band { display: none; }
+  .act--peak .stage__copy { position: relative; padding-bottom: 0; }
+  .act--peak .plate {
+    background: transparent;
+    border-top: none;
+    padding: 0;
+    width: 100%;
+  }
+  .act--peak .plate .say { font-size: clamp(1.5rem, 6.5vw, 2rem); }
+
+  /* Act 3, the treatment frame */
+  .stage__frame { aspect-ratio: 4 / 3; }
+}
+
+/* Anchor targets clear the sticky bar. Without this, jumping to
+   #programmes parks its heading behind the nav. */
+[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
+
+/* ============================================================
+   THE MIST HANDOFF
+   Fixed rather than owned by either section, so the fog crosses the
+   seam between the hero and the bath without being clipped by one and
+   restarted by the other.
+   ============================================================ */
+
+.fog {
+  position: fixed;
+  inset: 0;
+  z-index: 40;           /* under the nav at 60, over every section */
+  pointer-events: none;
+  overflow: hidden;
+  will-change: opacity;
+}
+
+/* Density, and nothing else.
+
+   The art peaks near 72% alpha and falls back to about 63% at its base, so
+   no stack of it ever reaches opaque and it cannot hide a section edge on
+   its own. This is what covers. It is exactly the viewport and only its
+   opacity is ever animated, so there is no boundary inside the frame to
+   see. Every band the previous two builds put on screen came from an
+   element that had an edge somewhere and eventually moved that edge into
+   view. This one has nowhere to put a line.
+
+   The tone is the fog's own white, a shade off the page canvas, so the
+   plates read as slightly brighter wisps sitting on it. */
+.fog__veil {
+  position: absolute;
+  inset: 0;
+  background: rgb(238, 236, 233);
+  opacity: 0;
+  will-change: opacity;
+}
+
+
+/* ---------- The bath ---------- */
+
+/* Pulled up over the hero's pin spacer so the scene is already sitting in
+   place behind the dense fog. Without this the page spends a whole
+   viewport swapping one section for the other with nothing on screen but
+   solid white, which is the dead scroll the first attempt produced.
+   Background is transparent because the section is overlapping the hero
+   long before it is meant to be seen; .bath carries the opacity. */
+.act--bath {
+  position: relative;
+  /* The scene stops climbing at 1.5 viewport-heights of scroll. This height
+     decides where it stops sticking, at top + height - one viewport, so at
+     300vh it stayed frozen at the top of the screen until 2.5, and the whole
+     viewport-height in between was scroll that changed nothing on screen.
+     230vh releases it at 1.8, which leaves a beat to read the line on a
+     finished frame and then moves on. It has to stay above the 196svh margin
+     or the sections after it get dragged up over it. */
+  height: 230vh;
+  /* Pulled far enough up that the scene is stuck flush at the top of the
+     viewport long before it starts climbing, while the hero is still
+     pinned and motionless. It shows nothing until then because the image
+     inside it is parked below the fold, so the overlap costs nothing.
+
+     The hero now stays pinned through the entire rise and is consumed from
+     below rather than sliding out, which is why the pin runs almost the
+     whole handoff. Its own bottom edge therefore never moves and never
+     enters the frame. The height has to clear the margin plus a viewport
+     of sticking with room to spare, or the sections after this one get
+     pulled up over it. */
+  margin-top: -196svh;
+  background: transparent;
+}
+
+/* Arrives late and underneath. What sits behind the steam at rest has to be
+   the page's own light rather than the hero still parked back there, or the
+   bedroom shows faintly through the thin top of the field. It can fade in
+   plainly because at that point the steam over it is dense and the two
+   grounds are both pale, so the change is a couple of levels of grey. */
+.bath__ground {
+  position: absolute;
+  inset: 0;
+  background: var(--canvas);
+  opacity: 0;
+  will-change: opacity;
+}
+
+.bath {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 540px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+/* Without scripting there is no fog to hide behind and nothing to drive the
+   climb, so the scene is simply there: no overlap, no feather, no offset. */
+html:not(.js) .bath { opacity: 1; }
+html:not(.js) .act--bath { margin-top: 0; height: auto; }
+html:not(.js) .bath__img { position: static; height: 100%; transform: none; }
+
+
+/* The scene and the steam are one photograph now, so almost all of the
+   arithmetic that used to live here is gone with them.
+
+   Set to the width of the window and nothing else. Height follows the
+   aspect, so at 1600 wide the image comes out about 1506 tall against a 900
+   tall viewport, and roughly 600px of it hangs above the top of .bath,
+   which clips it. That surplus is steam and it is meant to be unseen: its
+   only job is to sweep the frame on the way up and then leave. The bottom
+   rests on the bottom of the section, where the old bath photograph's
+   bottom rested.
+
+   No mask. Every band this page ever showed came from a CSS gradient, which
+   changes slope somewhere and hands the eye a somewhere to find. The
+   feather here was photographed: real steam dissolving into real air, with
+   no slope to find and nothing straight anywhere in it. */
+.bath__img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  will-change: transform;
+}
+
+/* A corner of density sized to the copy, not a band across the frame:
+   the steam is the subject and it keeps its contrast. */
+.scrim--bath {
+  background: linear-gradient(to top right,
+    rgba(243, 239, 236, .92) 0%,
+    rgba(243, 239, 236, .74) 24%,
+    rgba(243, 239, 236, .30) 46%,
+    rgba(243, 239, 236, 0)   66%);
+}
+
+.bath__copy {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding: 0 var(--gutter) clamp(56px, 11vh, 120px);
+}
+.bath__copy .say { max-width: 26ch; }
+
+@media (max-width: 700px) {
+  /* Same arithmetic as the desktop rule. At 200vh the scene came unstuck at
+     1.5, the exact moment it finished moving, so the frame was pulled away
+     the instant it was complete.
+
+     Taller than the desktop rule rather than shorter, which is the opposite
+     of what it looks like it should be. The hero stage is only 587px on a
+     phone rather than a full screen, so this section starts higher up the
+     document, at 0.20 of a viewport instead of 0.50. At 220vh that put the
+     unstick at 1.40 while the climb runs to 1.455, so the section let go of
+     the screen before the bath had finished arriving and the frame slid
+     away mid move. 260vh puts it at 1.79 and gives the finished frame the
+     same beat the desktop gets. */
+  .act--bath { height: 260vh; }
+  .bath__copy { padding-bottom: clamp(44px, 9vh, 80px); }
+
+  /* Window width is the right rule on a landscape screen and the wrong one
+     on a portrait phone. At 390 wide the image comes out 367 tall in an 844
+     tall window, which would leave the bath as a strip along the bottom and
+     the rest of the screen steam. So the phone sizes by height instead and
+     pays for it in width, which is what the old bath photograph did here
+     too: it showed about a fifth of its own width. Height is set so the
+     opaque part of the image, which is its bottom 40%, lands at 80% of the
+     screen. The horizontal offset frames the woman rather than the middle
+     of the picture, because the middle of the picture is tub. */
+  .bath__img {
+    width: auto;
+    height: 200svh;
+    max-width: none;
+    left: 50%;
+    margin-left: calc(200svh * 1.0619 * -0.36);
+  }
+}
+
+/* No fog, so nothing needs hiding, so nothing overlaps: the two scenes go
+   back to being two plain stacked sections. */
+@media (prefers-reduced-motion: reduce) {
+  .fog { display: none; }
+  .act--bath { height: auto; margin-top: 0; background: var(--canvas); }
+  .bath { position: relative; }
+  .bath__ground { opacity: 1; }
+  /* The steam is the top of this photograph and it only means anything
+     while it is moving, so a still page anchors the bottom and crops the
+     haze away rather than presenting it as something to look at. */
+  .bath__img {
+    position: static;
+    width: 100%; height: 100%;
+    margin-left: 0;
+    object-fit: cover;
+    object-position: center bottom;
+    transform: none;
+  }
+}

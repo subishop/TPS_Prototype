@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Postpartum Suite — Live-in postpartum care</title>
+<meta name="description" content="Live-in postpartum care for you and your baby. A trained specialist stays with you, from five days to thirty, so your own recovery is the thing being looked after." />
+<link rel="icon" href="assets/img/the-postpartum-suite-logo-mark.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Karla:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="v1.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     BLUSH DRIFT
+     One canvas, fixed to the viewport, sitting behind every section.
+     It is not attached to either act it serves, which is the point:
+     "You go back to bed" and "The care turns toward you" stop painting
+     their own grounds and the same single field shows through both, so
+     there is no join between them to see. It is invisible everywhere
+     else because it is faded out, and it only fades while an opaque
+     neighbour is covering the screen.
+     ============================================================ -->
+<canvas class="drift" data-drift aria-hidden="true"></canvas>
+
+<!-- ============================================================
+     NAVIGATION
+     Mechanic adapted from white-desert.com: a row of equal-width flat
+     tabs, the open one taking the accent while its siblings go neutral,
+     and a panel dropping beneath them with italic group headings over
+     plain link lists.
+
+     Retuned to the Brand Pack rather than copied: the nav bar itself is
+     the specified sticky paper bar at 72px with a single bottom hairline,
+     the tab pair is the documented badge treatment (Ember carrying white,
+     Haze carrying ink), the panel is a card at 10px with hairline
+     dividers and no shadow, and the logo stays left where the Brand Pack
+     puts it rather than centred where White Desert puts it.
+     ============================================================ -->
+<!-- ============================================================
+     NAVIGATION, centred lockup (shared with v2)
+     Tab group left, mark in the middle, tab group right. The bar
+     itself carries no background: the chips and the lockup carry
+     their own contrast instead, and the whole set flips to a light
+     treatment over the one dark frame on the page.
+     ============================================================ -->
+<header class="nav" data-nav>
+  <div class="nav__inner">
+
+    <div class="nav__side nav__side--l">
+      <div class="nav__tabs" data-tabs>
+        <button class="tab" type="button" data-tab="care" aria-expanded="false" aria-controls="panel-care">Care</button>
+        <button class="tab" type="button" data-tab="programmes" aria-expanded="false" aria-controls="panel-programmes">Programmes</button>
+      </div>
+    </div>
+
+    <a class="nav__brand" href="#top" aria-label="The Postpartum Suite, home">
+      <img class="nav__mark" src="assets/img/tps-mark-only.webp" alt="" width="567" height="558" />
+      <span class="nav__wordmark" aria-hidden="true">
+        <span class="wm-line wm-line--1"></span>
+        <span class="wm-line wm-line--2"></span>
+        <span class="wm-line wm-line--3"></span>
+      </span>
+    </a>
+
+    <div class="nav__side nav__side--r">
+      <div class="nav__tabs">
+        <button class="tab" type="button" data-tab="about" aria-expanded="false" aria-controls="panel-about">About</button>
+        <a class="tab tab--cta" href="#programmes">Book a call</a>
+      </div>
+      <button class="burger" type="button" data-burger aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="menu" data-menu hidden>
+
+    <section class="menu__panel" id="panel-care" data-panel="care" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">What we do</h2>
+        <ul class="menu__list">
+          <li><a href="#">The four kinds of care</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Meals</a></li>
+          <li><a href="#">Home support</a></li>
+          <li><a href="#">A day with your specialist</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">The tradition</h2>
+        <ul class="menu__list">
+          <li><a href="#">What is confinement care?</a></li>
+          <li><a href="#">Why forty days</a></li>
+          <li><a href="#">Confinement, doula or maternity nurse</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="menu__panel" id="panel-programmes" data-panel="programmes" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">Choose a length</h2>
+        <ul class="menu__list">
+          <li><a href="#">Five days</a></li>
+          <li><a href="#">Seven days</a></li>
+          <li><a href="#">Fourteen days</a></li>
+          <li><a href="#">Thirty days</a></li>
+          <li><a href="#programmes">Compare all four</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">Practical</h2>
+        <ul class="menu__list">
+          <li><a href="#">What is included</a></li>
+          <li><a href="#">Booking and dates</a></li>
+          <li><a href="#">If your baby comes early</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="menu__panel" id="panel-about" data-panel="about" hidden>
+      <div class="menu__group">
+        <h2 class="menu__head">The people</h2>
+        <ul class="menu__list">
+          <li><a href="#">Our story</a></li>
+          <li><a href="#">Meet your specialist</a></li>
+          <li><a href="#">Safety, vetting and DBS</a></li>
+        </ul>
+      </div>
+      <div class="menu__group">
+        <h2 class="menu__head">Questions</h2>
+        <ul class="menu__list">
+          <li><a href="#">Frequently asked</a></li>
+          <li><a href="#">Areas we cover</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</header>
+
+<div class="veil" data-veil hidden></div>
+
+<!-- ============================================================
+     THE DAY-CLOCK RAIL — the signature move.
+     A hairline down the left edge. The time advances with scroll
+     across the narrative, 07:00 to 22:00, and a tick travels the rule.
+     ============================================================ -->
+<div class="clock" aria-hidden="true" data-clock>
+  <span class="clock__time" data-clock-time>07:00</span>
+  <span class="clock__rule"><span class="clock__tick" data-clock-tick></span></span>
+  <span class="clock__label" data-clock-label>she arrives</span>
+</div>
+
+<main>
+
+<!-- ============ ACT 1 · 07:00 · ARRIVAL ============
+     pin + focus pull + kinetic lines. The room resolves out of blur. -->
+<section class="act act--hero" data-act data-time="07:00" data-label="she arrives">
+  <div class="stage" data-stage>
+    <div class="stage__media">
+      <img data-focus src="assets/img/s2-handoff.webp" alt="A specialist passing the swaddled baby to the mother resting in bed" width="2000" height="1116" />
+    </div>
+    <div class="scrim scrim--lead"></div>
+    <div class="stage__copy">
+      <h1 class="display display--xl" data-kinetic>The baby is held. So are you.</h1>
+      <p class="lede" data-fade="0.35">Live-in postpartum care, for you and your baby. A trained specialist stays with you, from five days to thirty.</p>
+      <a class="btn btn--primary" href="#programmes" data-fade="0.5">Book a consultation</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     THE MIST HANDOFF
+     A fixed fog bank, so it spans the seam between the hero and the
+     bath rather than being clipped by either section. Three copies of
+     the same plate drift on their own clocks at different speeds and
+     scales, which is what reads as volume: each layer is rigid, but
+     their overlap churns and never repeats.
+     ============================================================ -->
+<!-- ============================================================
+     THE MIST HANDOFF
+
+     Two jobs, split, because trying to make one thing do both is what put
+     lines across the frame twice.
+
+     The veil is density. It is exactly the viewport and only its opacity
+     ever changes, so it has no boundary inside the frame and cannot draw
+     an edge at any scroll position or window size. That is a property of
+     the geometry, not a margin anyone has to get right.
+
+     The plate is contour and texture. It is larger than the frame on every
+     side and travels a short distance, so no box edge of it ever crosses a
+     visible pixel either. It carries no responsibility for covering
+     anything, which is what lets it stay soft.
+
+     One plate, not three. Three copies of the same texture at different
+     offsets average each other out, which is literally a blur: the alpha
+     structure smooths and what is left reads as uniform density rather
+     than as smoke with a shape. Depth from parallax is not worth losing
+     the shape, because the shape is the thing being looked at.
+
+     Measured with lab/shoot-handoff.mjs and lab/edges.py. The build this
+     replaced put a visible band in 19 frames out of 22.
+     ============================================================ -->
+<div class="fog" data-fog aria-hidden="true">
+  <div class="fog__veil" data-fog-veil></div>
+  <!-- Offsets in viewport heights, worked back from where the density
+       actually is. At rest the dense band sits just under the fold. It ends
+       its arrival at about 62% down, which is where the rising scene's
+       feathered top edge will be, so from then on the fog rides that
+       junction up and the join is soft twice over. -->
+  <div class="fog__plate fog__plate--a" data-fog-plate data-from=".67" data-mid="-.11" data-peak="1"><img src="assets/img/ground-fog.webp" alt="" width="1920" height="1080" /></div>
+</div>
+
+<!-- ============ ACT · 08:30 · THE BATH ============
+     Pulled up over the hero's pin spacer in CSS so the scene is already
+     sitting in position by the time the fog is dense. The whole scene
+     carries one opacity, so nothing leaks over the hero while it waits. -->
+<section class="act act--bath" data-act data-clock-away data-time="08:30" data-label="the bath">
+  <div class="bath" data-bath>
+    <img class="bath__img" src="assets/img/bath-scene.webp" alt="A mother resting in a warm herbal bath, steam rising around her" width="2400" height="1340" />
+    <div class="scrim scrim--bath"></div>
+    <div class="bath__copy">
+      <p class="say" data-bath-line>A herbal bath, drawn warm.<br />You did not run it. You will not clean it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACT 2 · 09:30 · REST ============
+     reveal. A wipe up a full-bleed frame. -->
+<section class="act act--rest" data-act data-clock-away data-time="09:30" data-label="you go back to bed">
+  <div class="wrap wrap--narrow">
+    <p class="say" data-fade>You go back to bed. She takes the morning.</p>
+  </div>
+  <figure class="frame frame--bleed" data-reveal="up">
+    <img src="assets/img/treatment.webp" alt="A mother asleep on a bed while her specialist quietly moves the cot beside the window" width="1920" height="1072" />
+    <figcaption class="caption">Nothing needs you for the next few hours.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ ACT 3 · 11:00 · THE TREATMENT ============
+     parallax + cross-fade. The frame drifts closer. This is the differentiator. -->
+<section class="act act--treatment" data-act data-time="11:00" data-label="the treatment">
+  <div class="stage stage--split" data-stage>
+    <div class="stage__frame">
+      <div class="xfade" data-xfade>
+        <img class="xfade__img" src="assets/img/massage.webp" alt="A postpartum massage being given at home" width="1920" height="1072" />
+        <img class="xfade__img" src="assets/img/stones.webp" alt="Hot stone therapy laid out for a postpartum treatment" width="1920" height="1072" />
+        <img class="xfade__img" src="assets/img/bind.webp" alt="Traditional belly binding being wrapped" width="1920" height="1072" />
+      </div>
+    </div>
+    <div class="stage__side">
+      <h2 class="display display--lg" data-kinetic>The care turns toward you.</h2>
+      <p class="body">Massage with hot stones. Foot reflexology. Herbal baths. Belly binding, daily.</p>
+      <p class="body body--mute">Hands on care that repeats through your stay, not offered once as a treat.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACT 4 · 13:00 · FOUR KINDS OF CARE ============
+     pan. Lateral travel reads as breadth. -->
+<section class="act act--pan band" data-act data-clock-away data-time="13:00" data-label="lunch">
+  <div class="stage" data-stage>
+    <div class="rail" data-rail>
+
+      <div class="rail__intro rail__item">
+        <h2 class="display display--lg">Four kinds of care,<br />every single day.</h2>
+        <p class="body body--mute">Daily live-in support, seven in the morning until seven at night.</p>
+      </div>
+
+      <article class="rail__item card">
+        <span class="num">01</span>
+        <h3 class="card__title">Mother and baby</h3>
+        <figure class="card__media"><img src="assets/img/home.webp" alt="A mother resting on the sofa while her specialist holds the baby beside her" width="1200" height="800" /></figure>
+        <p class="body">Your baby cared for while you rest. Someone with you on the first walk outside.</p>
+      </article>
+
+      <article class="rail__item card">
+        <span class="num">02</span>
+        <h3 class="card__title">Treatments</h3>
+        <figure class="card__media"><img src="assets/img/stones.webp" alt="Hot stones laid out ready for a postpartum massage" width="1200" height="800" /></figure>
+        <p class="body">Belly binding daily. Herbal baths daily. Thermal blanket treatment through the week.</p>
+      </article>
+
+      <article class="rail__item card">
+        <span class="num">03</span>
+        <h3 class="card__title">Meals</h3>
+        <figure class="card__media"><img src="assets/img/meal.webp" alt="A warm postpartum recovery meal of salmon and vegetables" width="1200" height="800" /></figure>
+        <p class="body">Three fresh meals a day, cooked in your own kitchen, for you and your family.</p>
+      </article>
+
+      <article class="rail__item card">
+        <span class="num">04</span>
+        <h3 class="card__title">Home</h3>
+        <figure class="card__media"><img src="assets/img/cover.webp" alt="A nursery kept ready, cot made and clothes folded" width="1200" height="800" /></figure>
+        <p class="body">Laundry, ironing, light cleaning, the baby wardrobe organised, the groceries collected.</p>
+      </article>
+
+      <div class="rail__item rail__close">
+        <p class="say say--sm">The same four, whichever programme you choose.<br />What changes is how long they last.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACT 5 · 15:00 → 19:00 · THE DISSOLVE ============
+     PEAK. pin + cross-dissolve. Same sofa. The daylight leaves it.
+     The frame must not move, or the point is lost. -->
+<section class="act act--peak" data-act data-clock-away data-time="15:00" data-label="the afternoon">
+  <div class="stage" data-stage>
+    <div class="stage__media dissolve" data-dissolve>
+      <img class="dissolve__day"   src="assets/img/care.webp"  alt="A mother resting on the sofa in the afternoon while her specialist holds the baby beside her" width="1920" height="1072" />
+      <img class="dissolve__night" src="assets/img/night.webp" alt="The same sofa in the evening, the mother still resting, the specialist still holding the baby" width="1920" height="1072" />
+    </div>
+    <div class="scrim scrim--band"></div>
+    <div class="stage__copy stage__copy--low">
+      <div class="plate">
+        <div class="plate__slot">
+          <p class="say" data-cue="a">Three in the afternoon.</p>
+          <p class="say" data-cue="b">Seven in the evening.</p>
+          <p class="say" data-cue="c">She has not gone home.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACT 6 · 22:00 · NIGHT ============
+     reveal, then stillness. Authored silence. -->
+<section class="act act--night" data-act data-time="22:00" data-label="the night">
+  <div class="wrap wrap--narrow">
+    <p class="say" data-fade>You sleep. Someone else is awake.</p>
+    <p class="script">And in the morning, she is still here.</p>
+  </div>
+</section>
+
+<!-- ============ ACT 7 · PROGRAMMES ============
+     flow + in. The story is over. This answers the question it raised. -->
+<section class="act act--programmes" id="programmes" data-act data-label="programmes">
+  <div class="wrap">
+
+    <header class="sec-head" data-in>
+      <span class="eyebrow">Programmes</span>
+      <h2 class="display display--lg">Same care. Longer stay.</h2>
+      <p class="body body--wide">Every programme includes the same four areas of care. The longer ones give your recovery more time, and repeat the treatments more often as it progresses.</p>
+    </header>
+
+    <div class="prog" data-in data-stagger>
+      <article class="prog__item">
+        <span class="prog__days">5</span>
+        <span class="prog__unit">days of care</span>
+        <p class="body body--mute">The first week home, covered.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">7</span>
+        <span class="prog__unit">days of care</span>
+        <p class="body body--mute">A full week, with treatments through it.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">14</span>
+        <span class="prog__unit">days of care</span>
+        <p class="body body--mute">Treatments move to a weekly rhythm.</p>
+      </article>
+      <article class="prog__item">
+        <span class="prog__days">30</span>
+        <span class="prog__unit">days of care</span>
+        <p class="body body--mute">The full confinement period, as it is traditionally kept.</p>
+      </article>
+    </div>
+
+    <p class="note" data-in>Pricing is shown on the programmes page and talked through on the call. Placeholder in this prototype: see the note in the build report.</p>
+
+    <div class="close" data-in>
+      <h2 class="display display--md">Ready to talk it through?</h2>
+      <p class="script script--sm">Start with a conversation.</p>
+      <a class="btn btn--primary" href="https://calendly.com/thepostpartumsuite/30min">Book a consultation</a>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="120" height="120" />
+    <p class="micro">The Postpartum Suite &middot; Prototype &middot; Act sequence v1</p>
+  </div>
+</footer>
+
+<!-- ============================================================
+     BLUSH DRIFT SHADER
+     Lifted verbatim from "TPS Mesh Drift Background v2 stronger.html",
+     ids namespaced and nothing else touched, so the field on the page is
+     provably the same one that was designed rather than a reconstruction
+     of it. The palette and the uniform values live in meshDrift() in
+     v1.js. GLSL stays in script tags rather than JS string literals for
+     the same reason the rest of this prototype has no build step.
+     ============================================================ -->
+<script id="drift-vs" type="x-shader/x-vertex">
+attribute vec2 a_pos;
+void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+</script>
+
+<script id="drift-fs" type="x-shader/x-fragment">
+// "Mesh drift" — made with the 21st.dev Shader Builder
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+
+uniform vec3 u_colors[8];
+uniform vec4 u_scene;      // resolution.xy, time, colour count
+uniform vec4 u_shape;      // scale, intensity, paramA, warp
+uniform vec4 u_surface;    // detail, contrast, brightness, saturation
+uniform vec4 u_finish;     // hue, vignette, blur, grain
+uniform vec4 u_transform;  // seed, rotation, drift, OKLab toggle
+uniform vec4 u_space;      // offset.xy, pointer.xy
+uniform vec4 u_cursor;
+
+#define u_resolution u_scene.xy
+#define u_time u_scene.z
+#define u_colorCount u_scene.w
+#define u_scale u_shape.x
+#define u_intensity u_shape.y
+#define u_paramA u_shape.z
+#define u_warp u_shape.w
+#define u_detail u_surface.x
+#define u_contrast u_surface.y
+#define u_brightness u_surface.z
+#define u_saturation u_surface.w
+#define u_hue u_finish.x
+#define u_vignette u_finish.y
+#define u_blur u_finish.z
+#define u_grain u_finish.w
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+#define u_seed u_transform.x
+#else
+// Keep hash inputs inside mediump's guaranteed range.
+#define u_seed mod(u_transform.x, 31.0)
+#endif
+#define u_rotate u_transform.y
+#define u_drift u_transform.z
+#define u_oklab u_transform.w
+#define u_offset u_space.xy
+#define u_mouse u_space.zw
+#define u_cursorPresence u_cursor.x
+#define u_cursorEffect u_cursor.y
+#define u_cursorStrength u_cursor.z
+#define u_cursorRadius u_cursor.w
+
+float hash21(vec2 p) {
+#ifndef GL_FRAGMENT_PRECISION_HIGH
+  p = mod(p, 31.0);
+#endif
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+
+float grainHash(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+vec2 hash22(vec2 p) {
+#ifndef GL_FRAGMENT_PRECISION_HIGH
+  p = mod(p, 31.0);
+#endif
+  float n = sin(dot(p, vec2(41.0, 289.0)));
+  return fract(vec2(15731.743, 7892.321) * n);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(hash21(i), hash21(i + vec2(1.0, 0.0)), u.x),
+    mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), u.x),
+    u.y);
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise(p);
+    p = p * 2.03 + vec2(17.0, 9.2);
+    a *= 0.5;
+  }
+  return v;
+}
+
+// --- OKLab colour mixing (perceptual), gated by u_oklab ---
+vec3 srgbToLinear(vec3 c) {
+  return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)),
+    step(0.04045, c));
+}
+vec3 linearToSrgb(vec3 c) {
+  return mix(c * 12.92, 1.055 * pow(max(c, vec3(0.0)), vec3(1.0 / 2.4)) - 0.055,
+    step(0.0031308, c));
+}
+vec3 linToOklab(vec3 c) {
+  float l = 0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b;
+  float m = 0.2119034982 * c.r + 0.6806995451 * c.g + 0.1073969566 * c.b;
+  float s = 0.0883024619 * c.r + 0.2817188376 * c.g + 0.6299787005 * c.b;
+  l = pow(max(l, 0.0), 1.0 / 3.0);
+  m = pow(max(m, 0.0), 1.0 / 3.0);
+  s = pow(max(s, 0.0), 1.0 / 3.0);
+  return vec3(
+    0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s);
+}
+vec3 oklabToLin(vec3 c) {
+  float l = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z;
+  float m = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z;
+  float s = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z;
+  l = l * l * l; m = m * m * m; s = s * s * s;
+  return vec3(
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s);
+}
+vec3 mixColour(vec3 a, vec3 b, float t) {
+  if (u_oklab > 0.5) {
+    vec3 la = linToOklab(srgbToLinear(a));
+    vec3 lb = linToOklab(srgbToLinear(b));
+    return clamp(linearToSrgb(oklabToLin(mix(la, lb, t))), 0.0, 1.0);
+  }
+  return mix(a, b, t);
+}
+
+vec3 palette(float x) {
+  float n = max(u_colorCount - 1.0, 1.0);
+  float f = clamp(x, 0.0, 1.0) * n;
+  vec3 col = u_colors[0];
+  for (int i = 0; i < 7; i++) {
+    if (float(i) < n)
+      col = mixColour(col, u_colors[i + 1],
+        smoothstep(0.0, 1.0, clamp(f - float(i), 0.0, 1.0)));
+  }
+  return col;
+}
+
+vec3 hueRotate(vec3 col, float a) {
+  const mat3 toYIQ = mat3(0.299, 0.596, 0.211,
+                          0.587, -0.274, -0.523,
+                          0.114, -0.322, 0.312);
+  const mat3 toRGB = mat3(1.0, 1.0, 1.0,
+                          0.956, -0.272, -1.106,
+                          0.621, -0.647, 1.703);
+  vec3 yiq = toYIQ * col;
+  float ca = cos(a), sa = sin(a);
+  yiq = vec3(yiq.x, yiq.y * ca - yiq.z * sa, yiq.y * sa + yiq.z * ca);
+  return toRGB * yiq;
+}
+
+vec3 shade(vec2 uv, vec2 p, float t) {
+  vec3 acc = u_colors[0] * 0.15;
+  float total = 0.15;
+  for (int i = 0; i < 8; i++) {
+    if (float(i) >= u_colorCount) break;
+    float fi = float(i);
+    vec2 c = vec2(
+      sin(t * (0.21 + fi * 0.071) + fi * 2.4 + u_seed),
+      cos(t * (0.17 + fi * 0.093) + fi * 1.7)) * (0.45 + u_intensity * 0.35);
+    float w = exp(-dot(p - c, p - c) * 6.0);
+    acc += u_colors[i] * w;
+    total += w;
+  }
+  return acc / total;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 screenUv = uv;
+  vec2 p = (gl_FragCoord.xy - 0.5 * u_resolution.xy)
+    / min(u_resolution.x, u_resolution.y);
+  float cursorMask = 0.0;
+
+  if (u_cursorPresence > 0.001) {
+    vec2 cursor = (0.5 * u_mouse * u_resolution.xy)
+      / min(u_resolution.x, u_resolution.y);
+    vec2 cursorDelta = p - cursor;
+    if (u_cursorEffect < 0.5) {
+      p += cursor * u_cursorPresence * u_cursorStrength * 0.55;
+    } else {
+      float cursorDistance = length(cursorDelta);
+      vec2 cursorDirection = cursorDelta / max(cursorDistance, 0.0001);
+      cursorMask = u_cursorPresence
+        * (1.0 - smoothstep(0.0, u_cursorRadius, cursorDistance));
+      if (u_cursorEffect < 1.5) {
+        p -= cursorDirection * cursorMask * u_cursorStrength * 0.24;
+      } else if (u_cursorEffect < 2.5) {
+        float cursorAngle = cursorMask * u_cursorStrength * 2.2;
+        float cc = cos(cursorAngle), cs = sin(cursorAngle);
+        p = cursor + mat2(cc, -cs, cs, cc) * cursorDelta;
+      } else if (u_cursorEffect < 3.5) {
+        float ripple = sin(
+          cursorDistance / max(u_cursorRadius, 0.001) * 18.0 - u_time * 5.0);
+        p -= cursorDirection * ripple * cursorMask * u_cursorStrength * 0.07;
+      }
+    }
+  }
+
+  uv = p * min(u_resolution.x, u_resolution.y) / u_resolution.xy + 0.5;
+  p *= u_scale;
+  if (abs(u_rotate) > 0.0001) {
+    float cr = cos(u_rotate), sr = sin(u_rotate);
+    p = mat2(cr, -sr, sr, cr) * p;
+  }
+  p += u_offset;
+  if (u_drift > 0.0001)
+    p += u_drift * vec2(sin(u_time * 0.31), cos(u_time * 0.23));
+  if (u_warp > 0.0) {
+    p += u_warp * (vec2(
+      fbm(p * u_detail + u_seed),
+      fbm(p * u_detail + vec2(5.2, 1.3))) - 0.5);
+  }
+  vec3 col;
+  if (u_blur > 0.0) {
+    float e = u_blur;
+    float pe = e * u_scale;
+    vec2 uvE = vec2(e) * min(u_resolution.x, u_resolution.y) / u_resolution.xy;
+    col  = shade(uv, p, u_time) * 0.36;
+    col += shade(uv + vec2(uvE.x, 0.0), p + vec2(pe, 0.0), u_time) * 0.16;
+    col += shade(uv - vec2(uvE.x, 0.0), p - vec2(pe, 0.0), u_time) * 0.16;
+    col += shade(uv + vec2(0.0, uvE.y), p + vec2(0.0, pe), u_time) * 0.16;
+    col += shade(uv - vec2(0.0, uvE.y), p - vec2(0.0, pe), u_time) * 0.16;
+  } else {
+    col = shade(uv, p, u_time);
+  }
+  if (abs(u_contrast - 1.0) > 0.0001)
+    col = (col - 0.5) * u_contrast + 0.5;
+  if (abs(u_saturation - 1.0) > 0.0001) {
+    float luma = dot(col, vec3(0.299, 0.587, 0.114));
+    col = mix(vec3(luma), col, u_saturation);
+  }
+  if (abs(u_hue) > 0.0001)
+    col = hueRotate(col, u_hue);
+  if (abs(u_brightness) > 0.0001)
+    col += u_brightness;
+  if (u_vignette > 0.0001) {
+    float vd = length(screenUv - 0.5) * 1.41421356;
+    col *= 1.0 - u_vignette * smoothstep(0.35, 1.0, vd);
+  }
+  if (u_cursorPresence > 0.001 && u_cursorEffect > 3.5)
+    col += (vec3(0.18) + col * 0.12) * cursorMask * u_cursorStrength;
+  if (u_grain > 0.0001)
+    col += (grainHash(
+      gl_FragCoord.xy + vec2(u_seed * 17.0, u_seed * 31.0)) - 0.5) * u_grain;
+  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="v1.js"></script>
+</body>
+</html>
