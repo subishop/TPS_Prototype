@@ -1040,25 +1040,47 @@ html.drift-on .act--treatment { background: transparent; }
    ============================================================ */
 @media (max-width: 700px) {
 
-  /* Hero */
+  /* Hero.
+
+     The stage stays exactly one viewport tall, even though its media no
+     longer fills it. It is pinned for 1.46 viewports while the fog comes
+     up, and a pinned box shorter than the screen holds a band of empty
+     canvas under the button for the whole of that pin: on a 390x844 phone
+     the content ended at 531px and the next act did not begin for another
+     1.5 screens. Nothing was broken, there was simply nothing there.
+
+     So the media keeps its 4:3 block, which is the crop that survives
+     without cutting the mother out, and the copy takes every pixel the
+     media does not, centring itself in what it is given. The slack
+     becomes margin around the headline instead of a hole beneath it. */
   .act--hero .stage {
-    height: auto;
-    min-height: 0;
-    display: block;
+    height: 100svh;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
     background: var(--canvas);
   }
   .act--hero .stage__media {
     position: relative;
     inset: auto;
     width: 100%;
+    flex: 0 0 auto;
     aspect-ratio: 4 / 3;
   }
   .act--hero .stage__media img { object-position: 60% center; }
   .act--hero .scrim--lead { display: none; }
   .act--hero .stage__copy {
-    padding: clamp(24px, 5vh, 36px) var(--gutter) clamp(40px, 7vh, 56px);
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 4vh, 36px) var(--gutter);
     max-width: none;
   }
+  /* The copy block is a flex column now, so the button would otherwise
+     stretch to the full gutter width. The headline and lede still want to
+     stretch, which is what wraps them. */
+  .act--hero .stage__copy .btn--primary { align-self: flex-start; }
 
   /* Act 2, the wipe frame */
   .frame--bleed img { height: auto; aspect-ratio: 4 / 3; object-position: center 38%; }

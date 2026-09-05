@@ -891,6 +891,16 @@ function gallery() {
   // treatments there actually are, so adding one never overflows.
   root.style.setProperty('--gal-n', items.length);
 
+  // Every frame is cropped to 4:5 in the picker and the stage, and 4:3 on
+  // a phone, from sources that run from 4:5 to 16:9. Centre-cropping the
+  // wide ones cuts the mother out of her own photograph, which is the one
+  // imagery rule the Brand Pack states outright. So each treatment carries
+  // its own focal point and both the thumbnail and the large frame are
+  // positioned from it.
+  const posOf = btn => btn.dataset.pos || '50% 50%';
+  items.forEach(btn => { btn.querySelector('img').style.objectPosition = posOf(btn); });
+  imgs[0].style.objectPosition = posOf(items[0]);
+
   // Warm the large frames at init. Without this the first click on each
   // thumbnail waits on a full-size download before anything moves, which
   // measured as multiple seconds of apparently dead UI on a cold load.
@@ -935,11 +945,18 @@ function gallery() {
     const back = imgs[1 - front];
     const fore = imgs[front];
     back.src = btn.dataset.img;
-    back.alt = btn.dataset.title;
+    back.alt = btn.dataset.alt || btn.dataset.title;
+    back.style.objectPosition = posOf(btn);
 
     const land = () => {
       gsap.set(back, { opacity: 1 });
       gsap.set(fore, { opacity: 0 });
+      // Only the visible frame is described. The one waiting underneath is
+      // decoration, and announcing both reads as a duplicate to a screen
+      // reader, whichever of the pair happens to be in front.
+      back.removeAttribute('aria-hidden');
+      fore.setAttribute('aria-hidden', 'true');
+      fore.alt = '';
       front = 1 - front;
       busy = false;
     };
@@ -962,6 +979,7 @@ function gallery() {
     ghost.className = 'gal__ghost';
     ghost.src = btn.dataset.img;
     ghost.alt = '';
+    ghost.style.objectPosition = posOf(btn);
     gsap.set(ghost, {
       left: from.left, top: from.top, width: from.width, height: from.height,
       borderRadius: 6, opacity: 1
