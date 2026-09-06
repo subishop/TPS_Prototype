@@ -79,7 +79,11 @@
       <button class="tab tab--menu" type="button" data-burger aria-expanded="false" aria-controls="panel-care">Menu</button>
     </div>
 
-    <a class="nav__brand" href="#top" aria-label="The Postpartum Suite, home">
+    <!-- #content, not #top. There has never been an element with id
+         "top" on this page, so the lockup was a dead link too: the one
+         control every visitor tries first did nothing. #content is the
+         main landmark, which is where home means on a single page. -->
+    <a class="nav__brand" href="#content" aria-label="The Postpartum Suite, home">
       <img class="nav__mark" src="assets/img/tps-mark-only.webp" alt="" width="567" height="558" />
       <span class="nav__wordmark" aria-hidden="true">
         <span class="wm-line wm-line--1"></span>
@@ -100,61 +104,64 @@
       <div class="menu__group">
         <h2 class="menu__head">What we do</h2>
         <ul class="menu__list">
-          <li><a href="#">The four kinds of care</a></li>
-          <li><a href="#">Treatments</a></li>
-          <li><a href="#">Meals</a></li>
-          <li><a href="#">Home support</a></li>
-          <li><a href="#">A day with your specialist</a></li>
+          <li><a href="#care">The four kinds of care</a></li>
+          <li><a href="#treatments">Treatments</a></li>
+          <li><a href="#care">Meals</a></li>
+          <li><a href="#care">Home support</a></li>
+          <li><a href="#day">A day with your specialist</a></li>
         </ul>
       </div>
       <div class="menu__group">
         <h2 class="menu__head">The tradition</h2>
         <ul class="menu__list">
-          <li><a href="#">What is confinement care?</a></li>
-          <li><a href="#">Why forty days</a></li>
-          <li><a href="#">Confinement, doula or maternity nurse</a></li>
+          <li><span class="menu__pending">What is confinement care?</span></li>
+          <li><span class="menu__pending">Why forty days</span></li>
+          <li><span class="menu__pending">Confinement, doula or maternity nurse</span></li>
         </ul>
       </div>
+      <p class="menu__note">Greyed entries are pages this prototype does not build yet.</p>
     </section>
 
     <section class="menu__panel" id="panel-programmes" data-panel="programmes" hidden>
       <div class="menu__group">
         <h2 class="menu__head">Choose a length</h2>
         <ul class="menu__list">
-          <li><a href="#">Five days</a></li>
-          <li><a href="#">Seven days</a></li>
-          <li><a href="#">Fourteen days</a></li>
-          <li><a href="#">Thirty days</a></li>
+          <li><a href="#programmes">Five days</a></li>
+          <li><a href="#programmes">Seven days</a></li>
+          <li><a href="#programmes">Fourteen days</a></li>
+          <li><a href="#programmes">Thirty days</a></li>
           <li><a href="#programmes">Compare all four</a></li>
         </ul>
       </div>
       <div class="menu__group">
         <h2 class="menu__head">Practical</h2>
         <ul class="menu__list">
-          <li><a href="#">What is included</a></li>
-          <li><a href="#">Booking and dates</a></li>
-          <li><a href="#">If your baby comes early</a></li>
+          <li><span class="menu__pending">What is included</span></li>
+          <li><span class="menu__pending">Booking and dates</span></li>
+          <li><span class="menu__pending">If your baby comes early</span></li>
         </ul>
       </div>
+      <p class="menu__note">Greyed entries are pages this prototype does not build yet.</p>
     </section>
 
     <section class="menu__panel" id="panel-about" data-panel="about" hidden>
       <div class="menu__group">
         <h2 class="menu__head">The people</h2>
         <ul class="menu__list">
-          <li><a href="#">Our story</a></li>
-          <li><a href="#">Meet your specialist</a></li>
-          <li><a href="#">Safety, vetting and DBS</a></li>
+          <li><span class="menu__pending">Our story</span></li>
+          <li><span class="menu__pending">Meet your specialist</span></li>
+          <li><span class="menu__pending">Safety, vetting and DBS</span></li>
         </ul>
       </div>
       <div class="menu__group">
         <h2 class="menu__head">Questions</h2>
         <ul class="menu__list">
-          <li><a href="#">Frequently asked</a></li>
-          <li><a href="#">Areas we cover</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><span class="menu__pending">Frequently asked</span></li>
+          <li><span class="menu__pending">Areas we cover</span></li>
+          <li><span class="menu__pending">Contact</span></li>
         </ul>
       </div>
+      <p class="menu__note">Greyed entries are pages this prototype does not build yet.</p>
     </section>
 
   </div>
@@ -166,7 +173,7 @@
 
 <!-- ============ ACT 1 · 07:00 · ARRIVAL ============
      pin + focus pull + kinetic lines. The room resolves out of blur. -->
-<section class="act act--hero" data-act data-time="07:00">
+<section class="act act--hero" id="day" data-act data-time="07:00">
   <div class="stage" data-stage>
     <div class="stage__media">
       <img data-focus src="assets/img/s2-handoff.webp" alt="A specialist passing the swaddled baby to the mother resting in bed" width="2000" height="1116" />
@@ -280,7 +287,7 @@
 
 <!-- ============ ACT 4 · 13:00 · FOUR KINDS OF CARE ============
      pan. Lateral travel reads as breadth. -->
-<section class="act act--pan band" data-act data-time="13:00">
+<section class="act act--pan band" id="care" data-act data-time="13:00">
   <div class="stage" data-stage>
     <div class="rail" data-rail>
 
@@ -414,7 +421,7 @@
          crop to 4:5 here and 4:3 on a phone, from sources running 4:5 to 16:9,
          and centring the wide ones cuts the mother out of her own photograph.
          Open: item 06 has no photograph of its own in the set. -->
-    <div class="gal" data-gallery>
+    <div class="gal" id="treatments" data-gallery>
 
     <div class="gal__picker">
       <p class="gal__count">

@@ -618,7 +618,17 @@ main:focus { outline: none; }
   gap: clamp(28px, 5vw, 72px);
   grid-template-columns: 1fr;
 }
-@media (min-width: 720px) { .menu__panel { grid-template-columns: repeat(2, minmax(0, 250px)); } }
+/* The row gap is not the column gap. The panel is a two-column grid and
+   the note is a third item, so it lands on a new row and inherits the
+   column gap as its space above: 72px of nothing between the lists and
+   the line that explains them. The columns still want that much air
+   between them; the rows do not. */
+@media (min-width: 720px) {
+  .menu__panel {
+    grid-template-columns: repeat(2, minmax(0, 250px));
+    row-gap: clamp(24px, 3vw, 40px);
+  }
+}
 
 .menu__head {
   font-family: var(--f-display);
@@ -646,6 +656,51 @@ main:focus { outline: none; }
 }
 @media (hover: hover) and (pointer: fine) {
   .menu__list a:hover { color: var(--ink); padding-left: 8px; }
+}
+
+/* Entries with nowhere to go.
+
+   These were twenty-one links to href="#". Each one took a tab stop,
+   announced itself to a screen reader as a link, and did nothing when a
+   reviewer clicked it, which is a worse failure than not being a link at
+   all: it looks like the page is broken rather than unbuilt. Nine of them
+   had a destination on this page and now point at it. The twelve left do
+   not, so they are labels.
+
+   Same box as the links beside them so the rows still line up, in the
+   muted ink the rest of the system uses for text that is present but not
+   active. */
+.menu__pending {
+  display: block;
+  padding: 10px 0;
+  font-family: var(--f-read);
+  font-size: .95rem;
+  line-height: 1.4;
+  /* Muted by colour, not by opacity. Ink mute against the panel is the
+     same step down the system already uses for secondary text and it
+     clears 4.5; the .72 opacity this started with blended it to about
+     3.75, and an inactive control is exempt from that only on a
+     technicality nobody reading the page benefits from. The step from
+     ink soft to ink mute is visible enough beside the live links, and
+     the note under the list says what the step means. */
+  color: var(--ink-mute);
+  cursor: default;
+}
+
+/* One line per panel, because the panels open one at a time and a single
+   shared note would never be on screen next to what it explains. */
+.menu__note {
+  grid-column: 1 / -1;
+  max-width: 44ch;
+  font-family: var(--f-body);
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  line-height: 1.6;
+  color: var(--ink-mute);
+  margin: 0;
+  padding-top: .9rem;
+  border-top: 1px solid var(--hairline);
 }
 
 .veil {
