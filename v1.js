@@ -154,6 +154,23 @@ function actRest() {
       scrub: 0.5
     }
   });
+
+  // The photograph travels inside the frame the wipe is opening. Two rates on
+  // one gesture: the frame's edge is uncovering at the reader's pace while the
+  // picture behind it is moving at its own, which is what stops a full-bleed
+  // still from reading as a flat plate slotted into the page. Runs across the
+  // whole crossing rather than only the wipe, so it is still moving after the
+  // frame is fully open.
+  const plane = frame.querySelector('.frame__clip img');
+  if (plane) {
+    gsap.fromTo(plane,
+      { yPercent: -6 },
+      {
+        yPercent: 6, ease: 'none',
+        scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+      }
+    );
+  }
 }
 
 /* ------------------------------------------------------------
@@ -189,10 +206,18 @@ function actTreatment() {
   if (REDUCED || imgs.length < 2) return;
 
   // Drift closer as the act crosses the viewport. Attention being paid.
+  //
+  // This was a uniform scale from 1.1 to 1, which is one plane moving, which
+  // is a zoom. The frame is fixed and its contents are not, so giving the
+  // stack a vertical travel as well as the push makes the picture move
+  // against its own edge. The copy in .stage__side is the 1x reference and is
+  // left alone: text the reader is reading must not move relative to what
+  // they are reading it against. The stills are 114% of the frame, so five
+  // percent of travel keeps two points of cover in hand at the far end.
   gsap.fromTo(imgs,
-    { scale: 1.1 },
+    { scale: 1.08, yPercent: -5 },
     {
-      scale: 1, ease: 'none',
+      scale: 1, yPercent: 5, ease: 'none',
       scrollTrigger: { trigger: act, start: 'top bottom', end: 'bottom top', scrub: 0.7 }
     }
   );
@@ -286,6 +311,36 @@ function actPan() {
           containerAnimation: railTween,
           start: 'left 92%',
           once: true
+        }
+      }
+    );
+  });
+
+  // Lateral parallax. The rail travels sideways, so the depth cue has to
+  // travel sideways too: each photograph slides inside its own frame at a
+  // rate slightly off the card's, and the card's text stays at the card's
+  // rate. Read against the rail tween rather than against scroll position,
+  // for the same reason the entrances above are: inside a pinned stage the
+  // cards' vertical position barely changes, so a vertical trigger would fire
+  // all four at once and none of them would be tracking the actual travel.
+  //
+  // The four rates differ by roughly a tenth. Identical rates would move the
+  // row as one sheet, which is the thing this is here to stop, and anything
+  // wider stops reading as distance and starts reading as slippage.
+  const RATES = [7.2, 6.4, 7.8, 6.8];
+  gsap.utils.toArray('.rail__item .card__media img', rail).forEach((img, i) => {
+    const r = RATES[i % RATES.length];
+    gsap.fromTo(img,
+      { xPercent: -r },
+      {
+        xPercent: r, ease: 'none',
+        scrollTrigger: {
+          trigger: img.closest('.rail__item'),
+          containerAnimation: railTween,
+          start: 'left right',
+          end: 'right left',
+          scrub: true,
+          invalidateOnRefresh: true
         }
       }
     );
@@ -405,6 +460,22 @@ function actNight() {
     opacity: 1, y: 0, duration: 1.4, ease: EASE,
     scrollTrigger: { trigger: media, start: 'top 34%', once: true }
   });
+
+  // The same plane act 2 gets, for the same reason the wipe is the same:
+  // the ending answers the opening with the gesture the opening used. Kept a
+  // shade smaller than act 2's, because this act is the one that has to come
+  // to rest, and it does: the drift ends with the frame, and after that
+  // nothing on this screen is moving.
+  const plane = media.querySelector('img');
+  if (plane) {
+    gsap.fromTo(plane,
+      { yPercent: -5 },
+      {
+        yPercent: 5, ease: 'none',
+        scrollTrigger: { trigger: media, start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+      }
+    );
+  }
 }
 
 /* ------------------------------------------------------------

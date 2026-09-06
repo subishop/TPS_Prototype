@@ -873,6 +873,22 @@ main:focus { outline: none; }
 }
 [data-reveal] { will-change: clip-path; }
 
+/* The clip box the photograph travels inside. Without it the wipe and the
+   drift would be fighting over the same element: clip-path is what opens the
+   frame, transform is what moves the picture, and a single element cannot
+   carry the frame's rounded corners while its contents overhang them. The
+   figcaption stays outside, so it is never clipped and never drifts. */
+.frame__clip { border-radius: var(--r-media); overflow: hidden; }
+.js .frame--bleed .frame__clip { height: clamp(320px, 68vh, 720px); }
+.js .frame--bleed .frame__clip img {
+  position: relative;
+  top: -10%;
+  height: 120%;
+  max-width: none;
+  border-radius: 0;
+  will-change: transform;
+}
+
 /* ---------- Act 3: the treatment ---------- */
 
 /* This is the beat that carries the whole differentiator: care turned
@@ -946,6 +962,10 @@ html.drift-on .act--treatment { background: transparent; }
   object-fit: cover;
   will-change: opacity, transform;
 }
+/* Taller than the frame that clips it, so the drift has somewhere to go.
+   Sized off scale alone the stack runs out of cover and shows the frame
+   ground along whichever edge it is travelling away from. */
+.js .xfade__img { inset: -9% 0; height: 118%; max-width: none; }
 .xfade__img:not(:first-child) { opacity: 0; }
 
 .stage__side .display { margin-bottom: 1.4rem; }
@@ -1058,6 +1078,9 @@ html.drift-on .act--treatment { background: transparent; }
   height: 100%;
   object-fit: cover;
 }
+/* The rail travels sideways, so this plane is wider than its frame rather
+   than taller. Horizontal overhang, horizontal drift. */
+.js .card__media img { width: 122%; margin-left: -11%; max-width: none; will-change: transform; }
 .card .body { margin-bottom: 0; }
 
 /* ---------- Act 5: the dissolve. PEAK. ---------- */
@@ -1140,6 +1163,11 @@ html.drift-on .act--treatment { background: transparent; }
   object-fit: cover;
   object-position: center 46%;
 }
+/* .nightframe__media already clips for the wipe, so the plane only needs the
+   overhang. Same treatment as act 2 on purpose: the closing reveal answers
+   the opening one with the same gesture, and that includes the depth. */
+.js .nightframe__media { height: clamp(360px, 80vh, 840px); }
+.js .nightframe__media img { position: relative; top: -9%; height: 118%; max-width: none; will-change: transform; }
 /* Density only where the script sits. The photograph is already dark at
    the foot, so this is seating rather than covering. */
 .nightframe__scrim {
@@ -1836,4 +1864,14 @@ html:not(.js) .bath__img { position: static; height: 100%; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .gal__img, .gal__thumb { transition-duration: .01s; }
+
+  /* Nothing drifts, so nothing needs overhang. Every plane sits back inside
+     the frame it belongs to at its natural size. */
+  .js .frame--bleed .frame__clip,
+  .js .nightframe__media { height: auto; }
+  .js .frame--bleed .frame__clip img,
+  .js .nightframe__media img { position: static; top: auto; height: clamp(320px, 68vh, 720px); }
+  .js .nightframe__media img { height: clamp(360px, 80vh, 840px); }
+  .js .xfade__img { inset: 0; height: 100%; }
+  .js .card__media img { width: 100%; margin-left: 0; }
 }
