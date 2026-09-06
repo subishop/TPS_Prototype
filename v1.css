@@ -218,6 +218,15 @@ main:focus { outline: none; }
   text-wrap: balance;
 }
 .script--sm { font-size: clamp(1.4rem, 2.4vw, 2rem); margin: .4rem 0 1.6rem; }
+/* The licensed face, once, at the one moment that earns it. */
+.script--xl {
+  display: block;
+  font-size: clamp(1.8rem, 4.6vw, 3.9rem);
+  line-height: 1.14;
+  color: var(--paper);
+  max-width: 17ch;
+  margin: 0;
+}
 
 .eyebrow {
   display: block;
@@ -940,17 +949,23 @@ html.drift-on .act--treatment { background: transparent; }
   padding-left: clamp(20px, 3vw, 36px);
 }
 
-/* Cards: paper on the blush band, 10px, no shadow, hairline dividers. */
+/* Not cards.
+
+   These were paper rectangles at 10px on the coral band, four of them,
+   identical, forced to one height. That is the most recognisable layout
+   in the world, and it was drawing a box around content that already had
+   two edges of its own: the band separates the set from the page, and the
+   photograph has a border of its own the moment it stops being a
+   thumbnail inside something. So the paper, the padding and the card
+   radius are gone. What is left is a picture, a rule, and a caption.
+
+   The 16:9 media box stays exactly as it was, for the reason given above
+   it: these source photographs are 1920 by 1072 and a portrait crop threw
+   away half their width, and a landscape frame is the right shape for a
+   set that travels sideways. Only the box around it has gone. */
 .card {
-  background: var(--paper);
-  border-radius: var(--r-card);
-  padding: 24px;
   display: flex;
   flex-direction: column;
-  /* The rail read as a ragged set while two of the four carried an image
-     and two did not. All four now carry one, and the media grows to take
-     up whatever slack the copy leaves, so their bases line up. */
-  min-height: min(64vh, 540px);
 }
 .card__title {
   font-family: var(--f-display);
@@ -959,20 +974,34 @@ html.drift-on .act--treatment { background: transparent; }
   letter-spacing: .04em;
   font-weight: 400;
   line-height: 1.1;
-  margin: 0 0 .8rem;
-  padding-bottom: .8rem;
-  border-bottom: 1px solid var(--hairline);
+  margin: 0 0 .7rem;
+}
+/* The hairline the card's border used to be, doing the same job in one
+   line instead of four sides.
+
+   Ember goes to ember deep here, and only here. The number is 12.5px, so
+   it is small text and owes 4.5. It cleared that comfortably while it sat
+   on the white of a card; against the coral band the card used to hold it
+   off, the same colour measures 3.61 and fails. Ember deep on the band is
+   5.02. This is the one cost of taking the paper away, and it is paid in
+   the accent tier rather than by putting the box back. */
+.card .num {
+  margin: 0 0 .5rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--hairline-firm);
+  color: var(--ember-deep);
 }
 /* A real 16:9 box rather than whatever height the flex leftover happened to
    be. The source photographs are 1920 by 1072, so they were being cropped to
    0.81 and losing 55% of their own width. In a rail that travels sideways the
    landscape frame also runs with the movement instead of against it. */
-.card__media { margin: 0 0 1rem; flex: 0 0 auto; aspect-ratio: 16 / 9; min-height: 0; overflow: hidden; }
+/* The photograph leads now, so it takes the media radius rather than the
+   badge radius it wore as a thumbnail inside a card. */
+.card__media { margin: 0 0 1.1rem; flex: 0 0 auto; aspect-ratio: 16 / 9; min-height: 0; overflow: hidden; border-radius: var(--r-media); }
 .card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--r-badge);
 }
 .card .body { margin-bottom: 0; }
 
@@ -1026,10 +1055,72 @@ html.drift-on .act--treatment { background: transparent; }
    22:00, the night. Given a full screen the act lands, and the clock's own
    trigger ends on it before anything else is up. */
 .act--night {
-  padding-block: clamp(140px, 42vh, 420px);
+  padding-block: clamp(132px, 26vh, 300px) 0;
   background: var(--rose-mist);
   text-align: left;
 }
+.act--night .wrap--narrow { margin-bottom: clamp(96px, 20vh, 240px); }
+
+/* The landing.
+
+   The brand rule is that no section is dark, not that no photograph is.
+   So this is a photograph on rose mist, held inside the media radius the
+   rest of the page uses, and the ground either side of it stays exactly
+   where it was. */
+.nightframe {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+.nightframe__media {
+  position: relative;
+  border-radius: var(--r-media);
+  overflow: hidden;
+  will-change: clip-path;
+}
+.nightframe img {
+  width: 100%;
+  height: clamp(360px, 80vh, 840px);
+  object-fit: cover;
+  object-position: center 46%;
+}
+/* Density only where the script sits. The photograph is already dark at
+   the foot, so this is seating rather than covering. */
+.nightframe__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(10, 10, 10, .62) 0%,
+    rgba(10, 10, 10, .34) 24%,
+    rgba(10, 10, 10, .04) 56%,
+    rgba(10, 10, 10, 0)   72%);
+}
+.nightframe__line {
+  position: absolute;
+  left:  calc(var(--gutter) + clamp(20px, 3.4vw, 56px));
+  right: calc(var(--gutter) + clamp(20px, 3.4vw, 56px));
+  bottom: clamp(26px, 5.5vh, 68px);
+}
+
+/* ---------- The turn: story hands over to answer ---------- */
+
+/* Paper, straight after the darkest frame on the page. The change of
+   light is the whole device: no rule, no band, no heading above it. */
+.act--turn {
+  background: var(--paper);
+  padding-block: clamp(84px, 13vh, 160px);
+}
+.turn .eyebrow { display: block; margin-bottom: 1.2rem; }
+/* The measure is set on the line, not on the block around it: a ch on the
+   block is a Karla ch and buys about half of what the same number buys in
+   Instrument Serif at display size. */
+/* 34ch, measured, not guessed. The line's natural width set in capitals
+   is 582px, which is 33 of this face's own ch at display size, and it
+   breaks in two at the <br> there. At 24ch it was 424px and the second
+   line spilled into a third. */
+.turn__line { max-width: 34ch; }
 
 /* ---------- Act 7: programmes ---------- */
 
@@ -1038,51 +1129,177 @@ html.drift-on .act--treatment { background: transparent; }
 .sec-head { margin-bottom: clamp(40px, 7vh, 72px); }
 .sec-head .display { margin-bottom: 1.2rem; }
 
-.prog {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* ---------- Duration, drawn ----------
+
+   One scale, thirty days wide, shared by the ruler and by every track
+   under it. Both are laid on the same three-column grid, so a mark and a
+   bar at the same percentage land on the same pixel without either of
+   them knowing the other exists.
+
+   The week rules are a repeating gradient rather than four positioned
+   elements. 700% / 30 is seven days of the scale, so the rules fall on 7,
+   14, 21 and 28 in every row, at every width, and nothing has to be
+   placed by hand. Depth stays hairlines and edges: no shadow anywhere. */
+
+.dur {
+  --dur-max:  30;                                   /* the scale, in days */
+  --dur-cols: clamp(102px, 13vw, 146px) minmax(0, 1fr) minmax(0, 26ch);
+  --dur-gap:  clamp(16px, 2.6vw, 40px);
   border-top: 1px solid var(--hairline-firm);
 }
-@media (min-width: 860px) { .prog { grid-template-columns: repeat(4, 1fr); } }
 
-.prog__item {
-  padding: 28px 24px 28px 0;
-  border-bottom: 1px solid var(--hairline-firm);
-  border-right: 1px solid var(--hairline-firm);
+.dur__scale,
+.dur__row {
+  display: grid;
+  grid-template-columns: var(--dur-cols);
+  gap: var(--dur-gap);
+  align-items: center;
 }
-.prog__item:last-child { border-right: none; }
-@media (min-width: 860px) { .prog__item { border-bottom: none; } }
 
-.prog__days {
-  display: block;
+.dur__scale { padding-block: 12px 16px; }
+.dur__ruler { position: relative; display: block; height: 1.5rem; }
+.dur__mark {
+  position: absolute;
+  top: 0;
+  left: calc(var(--at) / var(--dur-max) * 100%);
+  transform: translateX(-50%);
+  font-family: var(--f-mono);
+  font-size: .66rem;
+  letter-spacing: .07em;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+/* The tick, not the label, is the true position: the label is centred on
+   it and may sit a pixel either side of where the type happens to land. */
+.dur__mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 1px;
+  height: 6px;
+  background: var(--hairline-firm);
+}
+
+.dur__list { list-style: none; margin: 0; padding: 0; }
+
+.dur__row {
+  padding-block: clamp(18px, 2.4vh, 26px);
+  border-bottom: 1px solid var(--hairline);
+}
+.dur__row:last-child { border-bottom: none; }
+
+.dur__head {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.dur__n {
   font-family: var(--f-display);
-  text-transform: uppercase;
-  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-size: clamp(2.1rem, 3.4vw, 3rem);
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.prog__unit {
-  display: block;
+.dur__unit {
   font-family: var(--f-body);
-  font-size: .72rem;
+  font-size: .66rem;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--ink-mute);
-  margin: .5rem 0 1rem;
 }
+
+/* 3px, not the 6px badge radius. At fourteen pixels tall a six-pixel
+   corner turns the five-day bar into a lozenge, and the brand's line on
+   buttons is that they are soft rectangles and never pills. A measured
+   length should read as a length. */
+.dur__track {
+  position: relative;
+  display: block;
+  height: 14px;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(to right,
+      var(--hairline-firm) 0 1px,
+      transparent 1px calc(700% / 30));
+}
+.dur__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--days) / var(--dur-max) * 100%);
+  border-radius: 3px;
+  background: var(--sand);
+  transform-origin: left center;
+}
+
+/* Thirty takes the accent because it is the length the tradition is
+   actually kept at, which is a fact about the programme rather than a
+   recommendation about the sale. */
+.dur__row--full .dur__bar { background: var(--ember); }
+.dur__row--full .dur__n   { color: var(--ember); }
+
+.dur__note {
+  font-family: var(--f-read);
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--ink-mute);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Stacked. The ruler keeps its two outer marks only: four labels inside a
+   phone's measure collide, and two weeks and four weeks are enough to
+   read the scale by. */
+@media (max-width: 760px) {
+  .dur__scale,
+  .dur__row { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .dur__pad { display: none; }
+  .dur__row { padding-block: 22px; }
+  .dur__mark:nth-child(odd) { display: none; }
+}
+
+/* ---------- The decision ---------- */
 
 .close {
   margin-top: clamp(56px, 10vh, 110px);
-  padding-top: clamp(32px, 5vh, 56px);
-  border-top: 1px solid var(--hairline);
+  padding: clamp(26px, 3.6vw, 44px);
+  background: var(--paper);
+  border: 1px solid var(--hairline-firm);
+  border-radius: var(--r-card);
+  display: grid;
+  gap: clamp(22px, 4vw, 56px);
+  align-items: end;
+}
+@media (min-width: 820px) { .close { grid-template-columns: minmax(0, 1fr) auto; } }
+
+.close__say .display { margin-bottom: .1rem; }
+.close__say .script--sm { margin-bottom: 0; }
+.close__act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+}
+.close__meta {
+  font-family: var(--f-body);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .05em;
+  line-height: 1.7;
+  color: var(--ink-mute);
+  margin: 0;
 }
 
 /* ---------- Footer ---------- */
 
+/* Haze, not canvas. The turn, the programmes, the decision card and the
+   footer were four consecutive things on two grounds; the last of them
+   now closes the page instead of continuing it. */
 .foot {
-  background: var(--canvas);
+  background: var(--haze);
   padding-block: clamp(48px, 8vh, 88px);
   border-top: 1px solid var(--hairline);
 }
@@ -1096,6 +1313,10 @@ html.drift-on .act--treatment { background: transparent; }
 
 @media (prefers-reduced-motion: reduce) {
   .js [data-fade], .js [data-in] > * { opacity: 1 !important; transform: none !important; }
+  /* The bars are the figure, so they are drawn, not animated to. */
+  .dur__bar { transform: none !important; }
+  .nightframe__media { clip-path: none !important; }
+  .nightframe__line { opacity: 1 !important; transform: none !important; }
   [data-focus] { filter: none !important; transform: none !important; }
   .dissolve__night { opacity: .5; }
   .xfade__img:not(:first-child) { opacity: 0; }
