@@ -365,10 +365,20 @@
   padding-block: .9rem;
 }
 
+/* justify-content is the one that matters on the row.
+
+   align-items centres on the cross axis, so while this is a column it
+   centres the two facts horizontally and looks correct. The moment the
+   breakpoint flips it to a row that same property is centring them
+   vertically instead, and the horizontal alignment falls back to
+   flex-start — the facts sit against the left end of a rule that spans the
+   whole measure. Both are stated, so neither direction depends on the
+   other's default. */
 .bk-facts__line {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: .25rem;
   margin: 0;
   font-family: var(--f-body);
