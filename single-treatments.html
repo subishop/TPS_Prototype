@@ -27,9 +27,18 @@
 
 <a class="skip" href="#content">Skip to content</a>
 
-<!-- v1's nav. is-scrolled from the start: this page opens on paper rather
-     than on a photographic hero, so the bar has nothing to resolve from,
-     which is the same choice programme.html makes. -->
+<!-- The only movement on the page, and it stays behind everything. Ported
+     from the booking app, where it is the ground the whole flow sits on. -->
+<div class="bk-aurora" aria-hidden="true"></div>
+
+<!-- v1's nav, over the booking page's own photograph.
+
+     is-scrolled stays on from the start, as on every other stage one page:
+     it drives the logo morph, and there is no hero tall enough here to
+     resolve that morph from. What is NOT on from the start is the bar's
+     ground — booking.js adds is-grounded once the photograph has been
+     scrolled past, so the bar floats over the picture the way it does on
+     v1.html and turns to canvas over the form below it. -->
 <header class="nav is-scrolled" data-nav>
   <div class="nav__inner">
 
@@ -105,9 +114,45 @@
 
 <main id="content" tabindex="-1">
 
+  <!-- The page opens the way the brand's own material does, and the way the
+       booking app does: a photograph across the full width, the mark set
+       into it on a disc, and only then the words.
+
+       There is nothing behind the logo. The photograph has a circle cut out
+       of its bottom edge (.bk-hero__strip in booking.css) and what shows
+       through is the page's own ground, so the logo sits on the canvas top
+       and bottom. That is what makes it read as the background coming up
+       through the picture rather than a sticker laid on top of it.
+
+       The wide file, 4000x1758 — the original photograph with canvas added
+       either side, subject untouched and still dead centre. It exists
+       because at full width a strip's height and how much of the photograph
+       it shows are the same number, so a shorter strip on the original file
+       would have left fingertips in a slot. A replacement photograph must be
+       similarly wide or the ratios in booking.css will not hold. -->
+  <header class="bk-hero">
+    <div class="bk-hero__strip">
+      <img src="assets/img/booking-header-wide.webp" alt="" aria-hidden="true"
+           width="4000" height="1758" fetchpriority="high" />
+    </div>
+
+    <div class="bk-hero__lockup">
+      <!-- The logo goes on whole, mark and wordmark, and sits straight on the
+           page. The pull that drops it onto the photograph's edge is 45.8% of
+           its own width, which is where the ring's centre is in the file
+           (394x480, ring centred at 49% across and 37.6% down), so the
+           photograph's edge runs exactly through the middle of the circle at
+           any size. Nothing here is tuned by eye. -->
+      <a href="v1.html" aria-label="The Postpartum Suite, home">
+        <img src="assets/img/tps-logo-480.webp" alt="The Postpartum Suite"
+             width="394" height="480" />
+      </a>
+    </div>
+  </header>
+
   <!-- This is a booking page. The flow is the content, so the copy above it
        is a title, one instruction and the two standing facts, and then it
-       gets out of the way. No eyebrow: the nav above carries the wordmark,
+       gets out of the way. No eyebrow: the logo above carries the wordmark,
        and setting the practice's name again under its own mark would be
        saying it twice. -->
   <section class="bk-head" id="book">
@@ -195,10 +240,26 @@
   </div>
 </dialog>
 
-<footer class="foot">
-  <div class="wrap">
-    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="700" height="900" />
-    <p class="micro">The Postpartum Suite &middot; Prototype &middot; Single treatments</p>
+<!-- The booking app's own foot, not the site's.
+
+     The legal links sit on their own row under the contact details rather
+     than beside them: they are the things somebody goes looking for
+     deliberately, and they should be findable without competing with the
+     address a client actually wants.
+
+     Terms and Privacy are real pages on the booking domain and do not exist
+     in this prototype, so the two links leave the site rather than dangle. -->
+<footer class="bk-foot">
+  <p class="bk-foot__tagline">The care mothers deserve, at home.</p>
+
+  <div class="bk-foot__row">
+    <a href="mailto:info@thepostpartumsuite.com">info@thepostpartumsuite.com</a>
+    <a href="https://thepostpartumsuite.com">thepostpartumsuite.com</a>
+  </div>
+
+  <div class="bk-foot__row">
+    <a href="https://booking.thepostpartumsuite.com/terms">Terms and Conditions</a>
+    <a href="https://booking.thepostpartumsuite.com/privacy">Privacy Policy</a>
   </div>
 </footer>
 

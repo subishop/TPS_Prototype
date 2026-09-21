@@ -17,50 +17,315 @@
    dark section. Depth is hairlines, edges and the pressed-in card.
    ============================================================ */
 
-/* The bar is transparent by default, which is right on v1.html: it opens
-   on photography and the tabs carry their own frosted pills so they stay
-   legible over it. This page has no hero and scrolls a long form under the
-   bar instead, so a calendar row shows through it at every scroll
-   position. programme.css solves the same problem the same way for the
-   builder, and a booking page has the same shape of content. */
+/* The bar over the photograph, then over the form.
+
+   Transparent is right while the hero is on screen: the page opens on
+   photography and the tabs carry their own frosted pills, which is exactly
+   v1.html's arrangement. It is wrong the moment the form scrolls under the
+   bar, where a calendar row shows straight through it. So the ground is
+   earned rather than assumed, and booking.js adds is-grounded once the
+   photograph has gone by. programme.css reaches the same place for the
+   builder, which simply never has a hero to float over. */
 .page--booking .nav {
+  border-bottom: 1px solid transparent;
+  transition: background-color 220ms var(--ease-out),
+              border-color 220ms var(--ease-out);
+}
+
+.page--booking .nav.is-grounded {
   background: var(--canvas);
-  border-bottom: 1px solid var(--hairline);
+  border-bottom-color: var(--hairline);
 }
 
 /* The page holds a form, so it gives up the inner-stub centring and runs
    as a normal column. .page--inner's flex centring would otherwise pin a
    five-step flow to the middle of the window and let it grow both ways. */
+/* No background of its own. The aurora is a fixed layer behind the page,
+   and an opaque main painted straight over it — which is what .page--inner
+   gives every other stage one page. The ground comes from body, as it does
+   in the booking app. */
 .page--booking main {
   display: block;
   min-height: 0;
   padding-block: 0;
   padding-inline: 0;
-  background: var(--canvas);
+  background: none;
 }
+
+/* ---------- The aurora ---------- */
+
+/* The only movement on the page, and it stays behind everything.
+
+   Two stacked gradients: a canvas-coloured comb that breaks the colour into
+   bands, and the colour itself. The layer is blurred past the point of
+   being readable as stripes, then masked so it burns off before it reaches
+   the flow — the copy and the form keep their plain ground.
+
+   --aurora-soft and --aurora-warm are the booking app's own ramp. v1.css
+   has no token for either: its coral tier stops at --coral-mid, and there
+   is nothing between --blush and --sand where the soft shade sits. They are
+   declared here rather than added to v1.css because they belong to this one
+   effect and not to the brand's palette. */
+.bk-aurora {
+  --aurora-soft: #CA8882;
+  --aurora-warm: #D66F4E;
+
+  --aurora-comb: repeating-linear-gradient(
+    100deg,
+    var(--canvas) 0%,
+    var(--canvas) 7%,
+    transparent 10%,
+    transparent 12%,
+    var(--canvas) 16%
+  );
+  --aurora-colour: repeating-linear-gradient(
+    100deg,
+    var(--blush) 10%,
+    var(--aurora-soft) 15%,
+    var(--aurora-warm) 20%,
+    var(--sand) 25%,
+    var(--blush) 30%
+  );
+
+  position: fixed;
+  inset: -10px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .6;
+  will-change: transform;
+
+  background-image: var(--aurora-comb), var(--aurora-colour);
+  background-size: 300%, 200%;
+  background-position: 50% 50%, 50% 50%;
+  filter: blur(45px);
+
+  -webkit-mask-image: radial-gradient(ellipse 120% 70% at 50% 0%, black 5%, transparent 70%);
+  mask-image: radial-gradient(ellipse 120% 70% at 50% 0%, black 5%, transparent 70%);
+}
+
+.bk-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--aurora-comb), var(--aurora-colour);
+  background-size: 200%, 100%;
+  background-attachment: fixed;
+  mix-blend-mode: soft-light;
+  animation: bk-aurora 60s linear infinite;
+}
+
+@keyframes bk-aurora {
+  from { background-position: 50% 50%, 50% 50%; }
+  to   { background-position: 350% 50%, 350% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-aurora::after { animation: none; }
+}
+
+/* The page's own content rides above the aurora. */
+.page--booking main,
+.page--booking .bk-foot { position: relative; z-index: 1; }
+
+/* ---------- The hero ---------- */
+
+/* One number governs the head of this page: the logo's rendered width. The
+   mark is set to it, the pull that drops the mark onto the photograph's
+   edge is a fraction of it, and so is the hole cut in the photograph.
+   Change it here and all three move together.
+
+   Fluid rather than stepped. Stepped, the logo grows 1.25x between a phone
+   and a desktop while the photograph grows 3.8x, so the mark would be 40%
+   of the width on a phone and 13% on a desktop — the same page in name
+   only. Sliding it across that range keeps the composition recognisable at
+   every width.
+
+   The floor is set against the wordmark, which is the part that fails
+   first: three lines of tracked capitals, cut at 28-30px in a 394px-wide
+   file. At 6.25rem those caps render about 7px tall, which is about as far
+   as this artwork goes before the wordmark stops being read and starts
+   being texture. */
+.bk-hero { --logo-w: clamp(6.25rem, 3.25rem + 8.2vw, 8.5rem); }
+
+/* The band is a fixed strip, and that is the whole trick.
+
+   Its height is a ratio of its own WIDTH, never of the viewport's height,
+   so the same rectangle of the photograph shows at every window size within
+   a breakpoint. Nothing about the crop knows or cares which device it is on.
+
+   Every ratio is wider than the file's own 2.276:1, which is what makes the
+   rest free: the width always binds, so object-fit: cover can only ever
+   trim top and bottom, never the sides. Full width is guaranteed by the
+   ratio rather than defended by it.
+
+   Three ratios, because one cannot serve a phone and a desktop. All three
+   are centred on the SAME point, 65% of the file's height. The
+   object-position figures below are derived from that: for a window of
+   fraction f centred at c, the position is (c - f/2) / (1 - f). Re-derive
+   them from that if a ratio ever changes; do not eyeball them.
+
+   The nav floats over the top of this strip rather than sitting above it,
+   which is v1.html's own arrangement and is why the ratios are the booking
+   app's unchanged. The notch is at the BOTTOM edge, so the bar never comes
+   near the logo.
+
+   That does mean less photograph shows here than on the booking page,
+   which has no bar: 103px of the 183px band at 1280, and almost none of
+   the 82px band on a phone. Adding --nav-h to the strip to win it back was
+   tried and is wrong. The crop is a window on a 4000x1758 file, and the
+   object-position figures above hold its centre at 65% of the file's
+   height; widening the window means re-deriving them, and at 375px a band
+   80px taller shows 98% of the file — the whole photograph, not a band. It
+   would be a different composition at the one width where the band matters
+   most. Better to keep the crop and let the bar sit on it.
+
+   max-height is a backstop, not a rule. At normal window shapes it never
+   engages; it exists so an ultrawide cannot produce a tall hero. */
+.bk-hero__strip {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 23 / 5;
+  max-height: 60vh;
+  overflow: hidden;
+
+  /* The notch the logo sits in.
+
+     The page has no white disc behind its logo. It has a hole in the
+     photograph, and what shows through it is the page's own ground —
+     canvas, and the aurora drifting across it — continuous with the ground
+     either side of the cutout. That is why this is a mask rather than a
+     shape: a shape would have to be painted in a colour, and any colour is
+     a guess about what is behind it.
+
+     The circle is anchored to the bottom edge, so only its top half is cut;
+     the half below the edge is already canvas. Everything derives from
+     --logo-w:
+
+       ring diameter   254/394 of the logo width  = 0.6447w
+       notch diameter  ring / 0.82                = 0.7862w  (the margin the
+                                                    brand leaves round the mark)
+       notch centre    49% of the logo width, and the logo is centred on the
+                       page, so the ring sits 0.0102w left of page centre
+
+     The 1.5px ramp at the edge is antialiasing; a hard stop renders as a
+     visibly jagged arc. */
+  --notch-r: calc(var(--logo-w) * 0.3931);
+  --notch-x: calc(50% - var(--logo-w) * 0.0102);
+  --notch: radial-gradient(
+    circle var(--notch-r) at var(--notch-x) 100%,
+    transparent 0,
+    transparent calc(100% - 1.5px),
+    #000 100%
+  );
+  -webkit-mask-image: var(--notch);
+  mask-image: var(--notch);
+}
+
+.bk-hero__strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 79.7%;
+}
+
+@media (min-width: 768px) {
+  .bk-hero__strip { aspect-ratio: 11 / 2; }
+  .bk-hero__strip img { object-position: 50% 75.6%; }
+}
+
+@media (min-width: 1024px) {
+  .bk-hero__strip { aspect-ratio: 7 / 1; }
+  .bk-hero__strip img { object-position: 50% 72.2%; }
+}
+
+.bk-hero__lockup { display: flex; justify-content: center; }
+
+/* Width comes from --logo-w, and so does the pull: 45.8% of that width is
+   37.6% of the logo's height, which is where the ring's centre is, so the
+   photograph's edge runs exactly through the middle of the circle at any
+   size. */
+.bk-hero__lockup a {
+  position: relative;
+  display: block;
+  width: var(--logo-w);
+  margin-top: calc(var(--logo-w) * -0.458);
+}
+
+.bk-hero__lockup img { width: 100%; height: auto; display: block; }
+
+/* ---------- The foot ---------- */
+
+.bk-foot {
+  border-top: 1px solid var(--hairline);
+  padding-block: 2.5rem;
+  margin-top: 3rem;
+}
+
+.bk-foot__tagline {
+  margin: 0;
+  text-align: center;
+  font-family: var(--f-script);
+  font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+  line-height: 1;
+  color: var(--action);
+}
+
+.bk-foot__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem 1.5rem;
+  padding-inline: var(--gutter);
+}
+
+.bk-foot__row a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-decoration: none;
+}
+
+.bk-foot__row a:hover { color: var(--ink); }
 
 /* ---------- The head of the page ---------- */
 
-/* The nav is fixed, so the page has to clear it itself. .page--inner did
-   that with the padding that centred its stub; this page dropped that
-   padding to run as a column, so the clearance comes back here, measured
-   against the bar rather than guessed at. */
+/* The hero clears the fixed bar for this page, so the head goes back to
+   the booking app's own spacing: it sits directly under the logo. */
 .bk-head {
   max-width: var(--max);
   margin-inline: auto;
-  padding: calc(var(--nav-h) + clamp(28px, 5vh, 48px)) var(--gutter) 0;
+  padding: 1.5rem var(--gutter) 0;
   text-align: center;
+}
+
+@media (min-width: 640px) {
+  .bk-head { padding-top: 2rem; }
 }
 
 .bk-head__title {
   font-family: var(--f-display);
   font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: .02em;
-  font-size: clamp(2.125rem, 4.4vw, 2.75rem);
-  line-height: 1.05;
+  /* .03em, which is the brand pack's own figure for a display heading and
+     what the booking app sets. v1.css's .display holds .02em for headlines
+     that run to two and three words; this one is three capitalised words on
+     one line and wants the extra air. */
+  letter-spacing: .03em;
+  font-size: 2.125rem;
+  line-height: 1.1;
   margin: 0;
   color: var(--ink);
+}
+
+@media (min-width: 640px) {
+  .bk-head__title { font-size: 2.75rem; }
 }
 
 /* One instruction, set as reading copy rather than as a tracked interface
@@ -70,16 +335,23 @@
 .bk-head__lede {
   font-family: var(--f-read);
   font-weight: 300;
-  font-size: clamp(.875rem, 1.2vw, 1rem);
+  font-size: .875rem;
   line-height: 1.55;
   color: var(--ink-soft);
-  max-width: 36ch;
+  /* 30ch on a phone, not the 22ch it looks like it wants: 22ch breaks these
+     two sentences over five lines, which costs 144px of a 390px screen —
+     more than the photograph above it. */
+  max-width: 30ch;
   margin: 1.25rem auto 0;
   text-wrap: pretty;
 }
 
-@media (max-width: 640px) {
-  .bk-head__lede { max-width: 30ch; }
+@media (min-width: 640px) {
+  .bk-head__lede {
+    font-size: 1rem;
+    max-width: 36ch;
+    margin-top: 1.5rem;
+  }
 }
 
 /* Hours and area are the page's standing facts rather than part of the
@@ -87,7 +359,7 @@
    The dot only earns its place when both are on that line, so it goes on
    a phone, where they stack. */
 .bk-facts {
-  max-width: 680px;
+  width: min(680px, 100% - var(--gutter) * 2);
   margin: 2rem auto 0;
   border-block: 1px solid var(--hairline);
   padding-block: .9rem;
@@ -121,9 +393,8 @@
 /* Narrower than the copy above it, and it gives up the centring: a left
    edge is what makes a sequence of questions legible. */
 .bk-flow {
-  max-width: 680px;
+  width: min(680px, 100% - var(--gutter) * 2);
   margin: 2rem auto 0;
-  padding-inline: var(--gutter);
   text-align: left;
 }
 
@@ -132,9 +403,9 @@
 }
 
 .bk-foot-link {
-  max-width: 680px;
+  width: min(680px, 100% - var(--gutter) * 2);
   margin: 3rem auto 0;
-  padding: 2rem var(--gutter) 0;
+  padding-top: 2rem;
   border-top: 1px solid var(--hairline);
   font-family: var(--f-read);
   font-size: .875rem;
@@ -1180,7 +1451,7 @@ textarea.bk-input { min-height: 88px; resize: vertical; line-height: 1.5; }
    here reached SimplyBook and no card was taken; saying so on the screen
    that would otherwise claim a booking is not optional. */
 .bk-proto {
-  max-width: 680px;
+  width: min(680px, 100% - var(--gutter) * 2);
   margin: 1.5rem auto 0;
   border: 1px dashed var(--sand);
   border-radius: var(--r-button);

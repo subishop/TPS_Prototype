@@ -1846,4 +1846,34 @@ function resetFlow() {
   document.querySelector(".bk-head")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+/* ============================================================
+   THE BAR'S GROUND
+
+   The nav floats over the hero photograph and takes a canvas ground once
+   the photograph has gone by, which is v1.html's behaviour reproduced for
+   a page whose hero is a strip rather than a stage.
+
+   It is a separate class from is-scrolled on purpose. is-scrolled drives
+   the logo morph and every stage one page sets it in the markup; borrowing
+   it here would tie the bar's colour to the mark's shape, and they answer
+   to different things.
+   ============================================================ */
+
+const bar = document.querySelector("[data-nav]");
+const hero = document.querySelector(".bk-hero");
+
+if (bar && hero) {
+  const groundBar = () => {
+    // The moment the photograph's last pixel passes under the bar.
+    const passed = hero.getBoundingClientRect().bottom <= parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--nav-h"),
+    );
+    bar.classList.toggle("is-grounded", passed);
+  };
+
+  groundBar();
+  window.addEventListener("scroll", groundBar, { passive: true });
+  window.addEventListener("resize", groundBar);
+}
+
 render();
