@@ -21,8 +21,9 @@
      inner.css adds only what an empty page needs and overrides nothing. -->
 <link rel="stylesheet" href="v1.css" />
 <link rel="stylesheet" href="inner.css" />
+<link rel="stylesheet" href="booking.css" />
 </head>
-<body class="page--inner">
+<body class="page--inner page--booking">
 
 <a class="skip" href="#content">Skip to content</a>
 
@@ -103,14 +104,109 @@
 <div class="veil" data-veil hidden></div>
 
 <main id="content" tabindex="-1">
-  <div class="inner-stub">
-    <p class="inner-stub__eyebrow">Page 13</p>
-    <h1 class="inner-stub__title">Single Treatments</h1>
-    <p class="inner-stub__note">One session visits, booked directly.</p>
-  </div>
+
+  <!-- This is a booking page. The flow is the content, so the copy above it
+       is a title, one instruction and the two standing facts, and then it
+       gets out of the way. No eyebrow: the nav above carries the wordmark,
+       and setting the practice's name again under its own mark would be
+       saying it twice. -->
+  <section class="bk-head" id="book">
+    <h1 class="bk-head__title">Book a treatment</h1>
+    <p class="bk-head__lede">
+      Choose your treatment, then a time that suits you. Your confirmation
+      arrives by email with a link to manage the booking.
+    </p>
+
+    <div class="bk-facts">
+      <p class="bk-facts__line">
+        <b>Monday to Saturday, 9am to 6pm</b>
+        <span class="bk-facts__dot" aria-hidden="true">&bull;</span>
+        <span>London only (Zones 1-5)</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- The flow builds itself into here. Everything it draws is thrown away
+       and rebuilt on each step, so nothing inside this div is authored. -->
+  <div class="bk-flow" data-booking></div>
+
+  <!-- The way back in, for somebody who is not booking at all. Somebody who
+       already has an appointment and wants to move it arrives on this page,
+       because this is the page they remember, not the inbox the confirmation
+       landed in. -->
+  <p class="bk-foot-link">
+    Already booked with us? <a href="#book">Manage your booking</a> to move or
+    cancel your appointment.
+  </p>
+
+  <!-- Said once at the foot of the page and again on the confirmation. This
+       prototype reproduces the booking app's flow, not its booking: no
+       appointment is written and no card is taken, because SimplyBook is the
+       third party that will own both. -->
+  <p class="bk-proto">
+    Prototype of the booking flow. It goes as far as the confirmation and no
+    further &mdash; no appointment is made and no payment is taken. Postcodes
+    are checked for real against postcodes.io.
+  </p>
+
 </main>
+
+<!-- The cancellation terms, put in front of someone before the booking is
+     made rather than after.
+
+     A native <dialog> opened with showModal(), which is what gives the focus
+     trap, the inertness of the page behind it and Escape-to-close for free.
+     The acknowledgement is a checkbox rather than a button labelled "I
+     agree": a checkbox has to be sought out and ticked, so it is a deliberate
+     act rather than the thing standing between someone and the button they
+     were already reaching for. -->
+<dialog class="bk-dialog" data-policy-dialog aria-labelledby="policy-heading">
+  <div class="bk-dialog__body">
+    <h2 id="policy-heading">Before you book</h2>
+    <ul class="bk-dialog__terms">
+      <li>Appointments may be moved or cancelled free of charge up to 48 hours before your appointment.</li>
+      <li>Within 48 hours of your appointment, it cannot be moved, and cancellations are non-refundable.</li>
+    </ul>
+    <label class="bk-dialog__ack">
+      <input type="checkbox" data-ack />
+      <span>I understand the 48-hour cancellation policy.</span>
+    </label>
+    <button type="button" class="bk-btn bk-btn--go bk-btn--wide" data-agree disabled>Agree and pay</button>
+    <button type="button" class="bk-btn bk-btn--ghost" data-decline>Go back</button>
+  </div>
+</dialog>
+
+<!-- The refusal, shown when a postcode falls outside the area we travel to.
+     It interrupts rather than sits in the page: the check happens when
+     Continue is pressed, so this is the moment the step is refused and it has
+     to be unmissable. Dismissing it returns to the address, still filled in,
+     to be corrected. The flow does not move on. -->
+<dialog class="bk-dialog" data-area-dialog aria-labelledby="service-area-heading">
+  <div class="bk-dialog__body">
+    <button type="button" class="bk-dialog__x" data-close aria-label="Close">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+    </button>
+    <h2 id="service-area-heading">Service Area Notice</h2>
+    <p>
+      We currently provide our services exclusively within London Zones 1 to 5.
+      Based on your entered postcode, your location is outside our current
+      service radius.
+    </p>
+  </div>
+</dialog>
+
+<footer class="foot">
+  <div class="wrap">
+    <img class="foot__mark" src="assets/img/the-postpartum-suite-logo.webp" alt="The Postpartum Suite" width="700" height="900" />
+    <p class="micro">The Postpartum Suite &middot; Prototype &middot; Single treatments</p>
+  </div>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="inner-nav.js"></script>
+
+<!-- The M25 ring first: booking.js ray-casts against it. -->
+<script src="booking-m25.js"></script>
+<script src="booking.js"></script>
 </body>
 </html>

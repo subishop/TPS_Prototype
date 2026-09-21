@@ -1,0 +1,1194 @@
+/* ============================================================
+   THE POSTPARTUM SUITE, the booking flow
+
+   A port of the live booking app (C:\dev\postpartum-booking, Next.js +
+   Tailwind) into this prototype's own stylesheet language. Every rule
+   below is the same rule that app expresses in utility classes; what
+   changed is only where the colours come from.
+
+   The booking app carries its own copy of the palette in @theme, one
+   shade off this one in two places: its canvas is #f5f5f5 where ours is
+   #F3EFEC, and its paper is #fefefe where ours is #FFFFFF. Nothing here
+   restates either. Every colour points at a v1.css token, so this page
+   belongs to the site rather than to the app it came from, and a brand
+   change made in one place reaches it.
+
+   Two brand rules still govern, as everywhere else: no shadows, and no
+   dark section. Depth is hairlines, edges and the pressed-in card.
+   ============================================================ */
+
+/* The bar is transparent by default, which is right on v1.html: it opens
+   on photography and the tabs carry their own frosted pills so they stay
+   legible over it. This page has no hero and scrolls a long form under the
+   bar instead, so a calendar row shows through it at every scroll
+   position. programme.css solves the same problem the same way for the
+   builder, and a booking page has the same shape of content. */
+.page--booking .nav {
+  background: var(--canvas);
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* The page holds a form, so it gives up the inner-stub centring and runs
+   as a normal column. .page--inner's flex centring would otherwise pin a
+   five-step flow to the middle of the window and let it grow both ways. */
+.page--booking main {
+  display: block;
+  min-height: 0;
+  padding-block: 0;
+  padding-inline: 0;
+  background: var(--canvas);
+}
+
+/* ---------- The head of the page ---------- */
+
+/* The nav is fixed, so the page has to clear it itself. .page--inner did
+   that with the padding that centred its stub; this page dropped that
+   padding to run as a column, so the clearance comes back here, measured
+   against the bar rather than guessed at. */
+.bk-head {
+  max-width: var(--max);
+  margin-inline: auto;
+  padding: calc(var(--nav-h) + clamp(28px, 5vh, 48px)) var(--gutter) 0;
+  text-align: center;
+}
+
+.bk-head__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  font-size: clamp(2.125rem, 4.4vw, 2.75rem);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--ink);
+}
+
+/* One instruction, set as reading copy rather than as a tracked interface
+   line. 14px on a phone and 16px above it: the smallest this goes while
+   still reading as a sentence addressed to someone rather than metadata,
+   which is what the 12px standing facts below it read as. */
+.bk-head__lede {
+  font-family: var(--f-read);
+  font-weight: 300;
+  font-size: clamp(.875rem, 1.2vw, 1rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 36ch;
+  margin: 1.25rem auto 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 640px) {
+  .bk-head__lede { max-width: 30ch; }
+}
+
+/* Hours and area are the page's standing facts rather than part of the
+   invitation, so they are ruled off above and below and set on one line.
+   The dot only earns its place when both are on that line, so it goes on
+   a phone, where they stack. */
+.bk-facts {
+  max-width: 680px;
+  margin: 2rem auto 0;
+  border-block: 1px solid var(--hairline);
+  padding-block: .9rem;
+}
+
+.bk-facts__line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+  margin: 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .6875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-facts__line b { font-weight: 600; }
+.bk-facts__dot { display: none; color: var(--sand); }
+
+@media (min-width: 640px) {
+  .bk-facts { padding-block: 1rem; }
+  .bk-facts__line { flex-direction: row; gap: 1rem; font-size: .75rem; }
+  .bk-facts__dot { display: inline; }
+}
+
+/* ---------- The flow's own column ---------- */
+
+/* Narrower than the copy above it, and it gives up the centring: a left
+   edge is what makes a sequence of questions legible. */
+.bk-flow {
+  max-width: 680px;
+  margin: 2rem auto 0;
+  padding-inline: var(--gutter);
+  text-align: left;
+}
+
+@media (min-width: 640px) {
+  .bk-flow { margin-top: 2.5rem; }
+}
+
+.bk-foot-link {
+  max-width: 680px;
+  margin: 3rem auto 0;
+  padding: 2rem var(--gutter) 0;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--f-read);
+  font-size: .875rem;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+.bk-foot-link a {
+  font-weight: 600;
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Only ever spoken, never drawn. Each step replaces the last, so focus
+   lands here on the way in and a screen reader is told which step it is. */
+.bk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.bk-sr:focus { outline: none; }
+
+/* Anything this flow scrolls to the top of the frame carries this.
+
+   The booking app puts its nav in the page flow and can anchor with a
+   plain 1.5rem of breathing room; this site's bar is fixed and 80px tall,
+   so an unqualified scrollIntoView lands the calendar's month header
+   underneath it. The gap is measured against --nav-h rather than guessed
+   at, so it follows the bar if the bar ever changes height. */
+.bk-anchor { scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
+
+/* ---------- Shared parts ---------- */
+
+.bk-eyebrow {
+  display: block;
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: .688rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ember-deep);
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+/* The interface layer: field labels, prices, totals, buttons, weekday
+   headers, captions. 500 rather than 600 — Montserrat sets heavier than
+   the mono face it replaced, so matching the old weight would make every
+   field label louder than it was. */
+.bk-label {
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.bk-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+/* Progressive disclosure: a section that appears when the step it belongs
+   to is reached. Short and slight — this is a page for tired people, so
+   movement should say "something new is here" and then stop. */
+@keyframes bk-reveal {
+  from { opacity: 0; transform: translateY(-.375rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+.bk-reveal { animation: bk-reveal 320ms var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-reveal { animation: none; }
+}
+
+/* ---------- Treatment cards ---------- */
+
+/* No gap on the list: a collapsed row would leave its gap behind as a
+   stray band of nothing. The spacing lives inside each row instead, where
+   it collapses along with the row. */
+.bk-services { display: grid; list-style: none; margin: 0; padding: 0; }
+
+/* 1fr to 0fr is the one way to animate a row to nothing without knowing
+   how tall it was. */
+.bk-services > li {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 300ms ease-out, opacity 300ms ease-out;
+}
+
+.bk-services > li[data-folded] { grid-template-rows: 0fr; opacity: 0; }
+
+/* min-height: 0 matters: a grid item defaults to min-height auto, which
+   floors the row at its content height and makes 0fr do nothing at all. */
+.bk-services > li > div { min-height: 0; overflow: hidden; }
+
+.bk-pick { display: block; cursor: pointer; padding-bottom: .75rem; }
+.bk-addons .bk-pick { padding-bottom: 0; }
+
+.bk-pick input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Hairline at rest, Ember and a blush wash once chosen. No shadow — depth
+   in this system is pressed in, never raised.
+
+   The card has no padding of its own: the photograph runs to the border on
+   three sides and the copy carries the inset instead. A picture inset
+   inside a box inside a border is three frames around one treatment, and
+   it reads like a search result. Flush, it reads like a card. */
+.bk-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  transition: border-color 140ms var(--ease-out), background-color 140ms var(--ease-out);
+}
+
+.bk-card:hover { border-color: var(--sand); }
+
+.bk-pick input:checked ~ .bk-card {
+  border-color: var(--action);
+  background: rgba(226, 202, 198, .35);
+}
+
+.bk-pick input:focus-visible ~ .bk-card {
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+}
+
+/* On a phone it stacks. Side by side at 375px leaves the copy a column
+   about fifteen characters wide, and since the photograph stretches to
+   whatever the copy needs, every extra wrapped line makes the picture
+   taller — one treatment ran to most of the screen. Stacked, the
+   photograph is a banner of fixed height and the copy has the full width. */
+@media (min-width: 640px) {
+  .bk-card { flex-direction: row; align-items: stretch; }
+}
+
+/* The blush wash is the box's own background rather than a substitute
+   element, so a photograph that never arrives leaves a tinted panel of
+   exactly the right shape instead of a hole. The images are decorative —
+   the treatment is named beside them — so nothing is lost. */
+.bk-tile {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: rgba(226, 202, 198, .4);
+  height: 160px;
+  width: 100%;
+}
+
+.bk-tile img { width: 100%; height: 100%; object-fit: cover; }
+
+@media (min-width: 640px) {
+  .bk-tile { height: auto; width: 160px; align-self: stretch; }
+  .bk-addons .bk-tile { width: 96px; }
+}
+
+@media (max-width: 639px) {
+  .bk-addons .bk-tile { height: 112px; }
+}
+
+.bk-card__body { min-width: 0; flex: 1; padding: 1rem; }
+
+@media (min-width: 640px) {
+  .bk-services .bk-card__body { padding: 1.25rem; }
+}
+
+/* Name and price share a baseline. The price is the second thing anybody
+   looks for, so it is level with the name rather than buried under it. */
+.bk-card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 1rem;
+}
+
+/* Capitals have no descenders to open the gap between lines, so a wrapped
+   title needs leading a lowercase heading would not. */
+.bk-card__name {
+  font-family: var(--f-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  min-width: 0;
+  font-size: clamp(1.1875rem, 2.4vw, 1.375rem);
+  line-height: 1.38;
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+
+.bk-card__price {
+  flex-shrink: 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .8125rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* How long the treatment runs. Under the name rather than beside the
+   price: it is part of what is being chosen, not part of what it costs. */
+.bk-card__len {
+  margin: .375rem 0 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-card__desc {
+  margin: .75rem 0 0;
+  padding-top: .75rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--f-read);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.bk-pick input:checked ~ .bk-card .bk-card__desc {
+  border-top-color: rgba(166, 76, 69, .25);
+}
+
+.bk-back-to-list {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  min-height: 44px;
+  margin-top: .25rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-back-to-list:hover { color: var(--ink); }
+.bk-back-to-list svg { width: 16px; height: 16px; }
+
+/* ---------- Add-ons ---------- */
+
+.bk-addons { margin-top: 2.5rem; }
+
+.bk-addons ul {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bk-addon__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0 1rem;
+}
+
+.bk-addon__name {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: .75rem;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+/* The add-on card carries a real, visible tick box. The input itself stays
+   screen-reader-only so the whole card remains the click target, and this
+   mirrors its state. */
+.bk-tick {
+  margin-top: .125rem;
+  display: flex;
+  height: 20px;
+  width: 20px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: .3rem;
+  border: 1px solid var(--sand);
+  background: var(--paper);
+  color: transparent;
+  transition: background-color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+}
+
+.bk-pick input:checked ~ .bk-card .bk-tick {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--paper);
+}
+
+.bk-tick svg { width: 12px; height: 12px; }
+
+/* Indented to the title, not the tick box — these lines should read as one
+   block of copy. */
+.bk-addon__len,
+.bk-addon__desc { padding-left: 2rem; }
+
+.bk-addon__len {
+  margin: .375rem 0 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-addon__desc {
+  margin: .5rem 0 0;
+  font-family: var(--f-read);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---------- Calendar ---------- */
+
+.bk-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.bk-cal__month {
+  margin: 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.bk-cal__step {
+  display: flex;
+  height: 44px;
+  width: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-button);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 140ms var(--ease-out);
+}
+
+.bk-cal__step:hover:not(:disabled) { border-color: var(--sand); }
+.bk-cal__step:disabled { cursor: not-allowed; opacity: .3; }
+
+/* A 375px screen leaves each square 43px at 4px gaps, a pixel under the
+   44px tap target. The gap gives that pixel back on a phone, where it is
+   needed, and stays roomier from 640 up. */
+.bk-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+
+@media (min-width: 640px) { .bk-cal__grid { gap: 4px; } }
+
+.bk-cal__wd {
+  padding-bottom: .5rem;
+  text-align: center;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-day {
+  display: flex;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-button);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  font-family: var(--f-read);
+  font-size: .875rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 140ms var(--ease-out), background-color 140ms var(--ease-out);
+}
+
+.bk-day:hover:not(:disabled) { border-color: var(--action); }
+
+/* A closed day is still legible, just plainly not on offer. */
+.bk-day:disabled {
+  cursor: not-allowed;
+  border-color: transparent;
+  background: none;
+  color: rgba(90, 82, 79, .35);
+}
+
+.bk-day[aria-pressed="true"] {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--paper);
+}
+
+.bk-day[aria-current="date"]:not([aria-pressed="true"]) {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.bk-cal__status,
+.bk-times__none {
+  margin-top: 1rem;
+  font-family: var(--f-read);
+  font-size: .8125rem;
+  color: var(--ink-mute);
+}
+
+.bk-cal__status { text-align: center; }
+
+/* ---------- Times ---------- */
+
+.bk-times { margin-top: 2.5rem; }
+
+.bk-times ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .bk-times ul { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* 44px minimum: this is a phone-first page and the grid is the densest tap
+   target on it. */
+.bk-time {
+  min-height: 44px;
+  width: 100%;
+  border-radius: var(--r-button);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 140ms var(--ease-out), background-color 140ms var(--ease-out);
+}
+
+.bk-time:hover { border-color: var(--action); }
+
+.bk-time[aria-pressed="true"] {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--paper);
+}
+
+.bk-times__clock {
+  margin: 1rem 0 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ---------- Fields ---------- */
+
+.bk-field { display: block; margin-top: 1.25rem; }
+.bk-field:first-child { margin-top: 0; }
+
+/* :not(.bk-error) is load-bearing. The message under a field is a span and
+   a direct child of the same label, so an unqualified `.bk-field > span`
+   catches it — and wins on specificity — which set every error on this
+   form in tracked capitals and read as a second field label rather than
+   as something gone wrong. */
+.bk-field > span:not(.bk-error),
+.bk-fieldset > legend {
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-req { margin-left: .125rem; color: var(--action-hover); }
+
+.bk-input,
+.bk-shell {
+  margin-top: .5rem;
+  min-height: 44px;
+  width: 100%;
+  border-radius: var(--r-button);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  padding: .5rem .75rem;
+  font-family: var(--f-body);
+  font-size: .9375rem;
+  color: var(--ink);
+  outline: none;
+}
+
+.bk-input:focus { border-color: var(--action); }
+
+/* The same field, drawn around something that is not only an input — a
+   fixed country code and the box beside it. The border lights up for
+   whatever inside it has focus, since the thing being typed into is no
+   longer the border's own element. */
+.bk-shell { display: flex; align-items: center; gap: .5rem; }
+.bk-shell:focus-within { border-color: var(--action); }
+.bk-shell__code { flex-shrink: 0; color: var(--ink-mute); }
+
+.bk-shell input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  color: inherit;
+}
+
+.bk-input[aria-invalid="true"],
+.bk-shell:has(input[aria-invalid="true"]) { border-color: var(--action-hover); }
+
+.bk-input--pc { text-transform: uppercase; }
+.bk-input--pc::placeholder { text-transform: none; }
+
+textarea.bk-input { min-height: 88px; resize: vertical; line-height: 1.5; }
+
+/* Why a field is holding things up, under the field it is about. Rendered
+   only when there is something to say — an empty slot left behind would
+   push the next field down for no reason. */
+.bk-error {
+  display: block;
+  margin-top: .5rem;
+  font-family: var(--f-read);
+  font-size: .8125rem;
+  color: var(--action-hover);
+}
+
+.bk-radios {
+  margin-top: .5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.5rem;
+}
+
+.bk-radio {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.bk-radio input { width: 16px; height: 16px; accent-color: var(--action); }
+
+/* The refusal stands on its own rather than going through the field error,
+   because it is not a field waiting to be filled in: nothing typed above
+   it will clear it. */
+.bk-refusal {
+  margin: .75rem 0 0;
+  border-radius: var(--r-button);
+  border: 1px solid var(--action);
+  background: rgba(226, 202, 198, .35);
+  padding: .75rem 1rem;
+  font-family: var(--f-read);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.bk-address { margin-top: 1.5rem; }
+.bk-address > span {
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-address__note {
+  margin: .25rem 0 0;
+  font-family: var(--f-read);
+  font-size: .8125rem;
+  color: var(--ink-mute);
+}
+
+/* ---------- Review ---------- */
+
+.bk-review {
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  padding: .25rem 1.25rem;
+}
+
+.bk-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .25rem 1.5rem;
+  border-top: 1px solid var(--hairline);
+  padding-block: .75rem;
+}
+
+.bk-row:first-child { border-top: 0; }
+
+.bk-row__label {
+  flex-shrink: 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-row__value {
+  text-align: right;
+  white-space: pre-line;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  color: var(--ink);
+}
+
+/* Naming the terms here means the dialog is the second time someone reads
+   about them, not an obstacle sprung at the last moment. */
+.bk-terms {
+  max-width: var(--measure);
+  margin: .75rem auto 0;
+  text-align: center;
+  font-family: var(--f-read);
+  font-size: .8125rem;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+.bk-submit-error {
+  margin: 1.5rem 0 0;
+  border-radius: var(--r-button);
+  border: 1px solid var(--action);
+  background: rgba(226, 202, 198, .35);
+  padding: .75rem 1rem;
+  font-family: var(--f-read);
+  font-size: .875rem;
+  color: var(--ink);
+}
+
+/* ---------- Total and the step buttons ---------- */
+
+/* The running total follows the reader from the moment there is one, so
+   the price is never a surprise waiting at the end. */
+.bk-total {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.25rem;
+}
+
+.bk-total__label,
+.bk-total__value {
+  font-family: var(--f-body);
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.bk-total__label { font-size: .688rem; color: var(--ink-mute); }
+.bk-total__value { font-size: 1rem; color: var(--ink); }
+
+.bk-actions { margin-top: 1.5rem; scroll-margin-bottom: 1.5rem; }
+.bk-actions__row { display: flex; gap: .75rem; }
+
+.bk-btn {
+  min-height: 48px;
+  border-radius: var(--r-button);
+  border: 1px solid transparent;
+  padding-inline: 1.5rem;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .8125rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out),
+              border-color 140ms var(--ease-out);
+}
+
+.bk-btn--go {
+  flex: 1;
+  background: var(--action);
+  color: var(--paper);
+}
+
+.bk-btn--go:hover:not(:disabled) { background: var(--action-hover); }
+
+.bk-btn--go:disabled {
+  cursor: not-allowed;
+  opacity: .4;
+  background: var(--action);
+}
+
+.bk-btn--back {
+  flex-shrink: 0;
+  border-color: var(--hairline);
+  background: var(--paper);
+  color: var(--ink);
+  padding-inline: 1.25rem;
+}
+
+.bk-btn--back:hover { border-color: var(--sand); }
+
+.bk-btn--wide { width: 100%; margin-top: 1rem; }
+.bk-btn--confirm { width: 100%; margin-top: 2rem; }
+
+.bk-btn--ghost {
+  width: 100%;
+  min-height: 44px;
+  margin-top: .75rem;
+  border: 0;
+  background: none;
+  color: var(--ink-mute);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bk-btn--ghost:hover { color: var(--ink); }
+
+/* Two different things share this line. "Choose a date to continue" is a
+   nudge and stays quiet; a postcode we could not check is a failure, and
+   reads in the colour every other error on this form uses. */
+.bk-blocked {
+  margin: .75rem 0 0;
+  text-align: center;
+  font-family: var(--f-read);
+  font-size: .8125rem;
+  color: var(--ink-mute);
+}
+
+.bk-blocked:empty { margin: 0; }
+.bk-blocked[data-error] { color: var(--action-hover); }
+
+.bk-retry {
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  padding: 1.5rem;
+}
+
+.bk-retry p { margin: 0; font-family: var(--f-read); font-size: .875rem; color: var(--ink-soft); }
+
+.bk-retry button {
+  margin-top: .75rem;
+  min-height: 44px;
+  border-radius: var(--r-button);
+  border: 1px solid var(--action);
+  background: none;
+  padding-inline: 1rem;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--action);
+  cursor: pointer;
+}
+
+.bk-retry button:hover { background: var(--action); color: var(--paper); }
+
+/* ---------- Dialogs ---------- */
+
+/* Native <dialog> opened with showModal(), which is what gives the focus
+   trap, the inertness of the page behind it and Escape-to-close for free —
+   all of which a hand-rolled overlay has to reimplement and usually gets
+   partly wrong. */
+.bk-dialog {
+  margin: auto;
+  width: calc(100% - 2rem);
+  max-width: 28rem;
+  border-radius: 16px;
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0;
+}
+
+.bk-dialog::backdrop { background: rgba(10, 10, 10, .45); }
+
+.bk-dialog__body { position: relative; padding: 1.5rem; }
+
+@media (min-width: 640px) {
+  .bk-dialog__body { padding: 2rem; }
+}
+
+/* pr clears the close button: the cross sits 12px in and is 36px wide, so
+   anything less lets a capital run under it. */
+.bk-dialog h2 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  padding-right: 3rem;
+}
+
+.bk-dialog__terms {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+
+.bk-dialog__terms li {
+  border-top: 1px solid var(--hairline);
+  padding-top: .75rem;
+  font-family: var(--f-read);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.bk-dialog__ack {
+  margin-top: 1.5rem;
+  display: flex;
+  cursor: pointer;
+  align-items: flex-start;
+  gap: .75rem;
+}
+
+.bk-dialog__ack input {
+  margin-top: .125rem;
+  height: 20px;
+  width: 20px;
+  flex-shrink: 0;
+  accent-color: var(--action);
+}
+
+.bk-dialog__ack span {
+  font-family: var(--f-read);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.bk-dialog p {
+  margin: 1rem 0 0;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.bk-dialog__x {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  display: flex;
+  height: 36px;
+  width: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
+}
+
+.bk-dialog__x:hover { background: rgba(226, 202, 198, .4); color: var(--ink); }
+.bk-dialog__x svg { width: 16px; height: 16px; }
+
+/* ---------- Confirmation ---------- */
+
+.bk-done {
+  border-radius: 16px;
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  padding: 2rem;
+  text-align: center;
+  outline: none;
+}
+
+.bk-done__when {
+  margin: 1rem 0 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.bk-done__what {
+  max-width: var(--measure);
+  margin: 1rem auto 0;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.bk-done__addons { margin-top: 1.25rem; }
+
+.bk-done__addons > p {
+  margin: 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.bk-done__chips {
+  margin-top: .5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem;
+}
+
+.bk-done__chips span {
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: var(--canvas);
+  padding: .5rem 1rem;
+  font-family: var(--f-read);
+  font-size: .9375rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.bk-done__ref-label {
+  margin: 2rem 0 0;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .688rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* The reference is the one thing on this card set in IBM Plex Mono, and it
+   is the case the brand pack reserves it for: a figure trusted at a
+   glance. SimplyBook issues codes in lower case and the confirmation email
+   quotes them that way, so shouting it here would make somebody checking
+   one against the other doubt they have the right booking. */
+.bk-done__ref {
+  margin: .25rem 0 0;
+  font-family: var(--f-mono);
+  font-size: 1.25rem;
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.bk-done__manage {
+  margin-top: 2rem;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.5rem;
+}
+
+.bk-done__manage a {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-button);
+  border: 1px solid var(--action);
+  padding-inline: 1.5rem;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: .8125rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--action);
+  text-decoration: none;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
+}
+
+.bk-done__manage a:hover { background: var(--action); color: var(--paper); }
+
+/* The terms, kept where terms belong: last, small, and quiet. A
+   confirmation should not close by raising its voice about what is
+   non-refundable. */
+.bk-done__terms {
+  max-width: var(--measure);
+  margin: 1rem auto 0;
+  font-family: var(--f-read);
+  font-size: .75rem;
+  line-height: 1.6;
+  color: rgba(90, 82, 79, .7);
+}
+
+/* The one line this prototype says that the real app does not. Nothing
+   here reached SimplyBook and no card was taken; saying so on the screen
+   that would otherwise claim a booking is not optional. */
+.bk-proto {
+  max-width: 680px;
+  margin: 1.5rem auto 0;
+  border: 1px dashed var(--sand);
+  border-radius: var(--r-button);
+  padding: .75rem 1rem;
+  font-family: var(--f-body);
+  font-size: .72rem;
+  letter-spacing: .04em;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  text-align: center;
+}
